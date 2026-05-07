@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const invoiceSchema = new mongoose.Schema({
-  sale_Id: {
+  saleId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Sale",
     required: true

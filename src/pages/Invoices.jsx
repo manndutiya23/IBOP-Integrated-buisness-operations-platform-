@@ -3,7 +3,8 @@ import { jsPDF } from "jspdf";
 import { generateInvoicePDF } from "../utils/pdfGenerator";
 
 function Invoices() {
-  const { invoices, createInvoice } = useBusinessData();
+  const { invoices, createInvoice, toggleInvoiceStatus } = useBusinessData();
+  
   const handleCreateInvoice = (sale) => {
   createInvoice(sale);
 };
@@ -66,7 +67,16 @@ function Invoices() {
                     >
                       View
                     </button>
-
+              <button
+                onClick={() => toggleInvoiceStatus(invoice._id)}
+                className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                  invoice.status === "paid"
+                    ? "bg-emerald-400 text-black"
+                    : "bg-yellow-400 text-black"
+                }`}
+              >
+                {invoice.status}
+              </button>
                     <button
                      onClick={() => generateInvoicePDF(invoice)}
                       className="rounded-full bg-white/5 px-4 py-2 text-sm text-white hover:bg-white/10"

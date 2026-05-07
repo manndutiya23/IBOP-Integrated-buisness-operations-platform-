@@ -139,9 +139,7 @@ useEffect(() => {
   const profit = totalRevenue - totalExpenses;
   const [invoices, setInvoices] = useState([]);
   const lowStockProducts = products.filter((p) => p.stock < 5);
-  const subtotal = sales.totalPrice;
-  const gst = subtotal * 0.18;
-  const finalAmount = subtotal + gst;
+  
 
   const updateProduct = async (updatedProduct) => {
     try {
@@ -183,6 +181,10 @@ useEffect(() => {
 
 const createInvoice = async (sale) => {
   try {
+    
+  const gst = subtotal * 0.18;
+  const finalAmount = subtotal + gst;
+  const subtotal = sale.totalPrice;
     const invoiceData = {
   saleId: sale._id,
   companyName: sale.companyName,
@@ -199,6 +201,7 @@ const createInvoice = async (sale) => {
   date: sale.date,
   dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     };
+  
     console.log("SALE OBJECT:", sale);
     console.log("SENDING TO BACKEND:", invoiceData);
     await axios.post("http://localhost:5000/api/invoices", invoiceData);
@@ -216,6 +219,21 @@ const createInvoice = async (sale) => {
       )
     );
   };
+
+  const toggleInvoiceStatus = async (invoiceId) => {
+  try {
+    await axios.patch(
+      `http://localhost:5000/api/invoices/${invoiceId}/status`
+    );
+
+    fetchInvoices();
+  } catch (error) {
+    console.error(
+      "TOGGLE STATUS ERROR:",
+      error
+    );
+  }
+};
 
   const addEmployee = (emp) => {
   setEmployees((current) => [
@@ -256,6 +274,7 @@ const deleteEmployee = (id) => {
         setInvoices,
         createInvoice,
         togglePayment,
+        toggleInvoiceStatus,
         employees,
         setEmployees,
         addEmployee,
