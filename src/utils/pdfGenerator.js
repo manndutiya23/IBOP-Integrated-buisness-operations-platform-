@@ -67,6 +67,22 @@ export const generateInvoicePDF = (selectedSale) => {
     doc.setFontSize(19);
     doc.setFont("helvetica", "bold");
     doc.text("Invoice", pageWidth / 2, 70, { align: "center" });
+ doc.setFillColor(255, 193, 7);
+
+doc.roundedRect(145, 62, 40, 10, 3, 3, "F");
+
+doc.setTextColor(0, 0, 0);
+doc.setFontSize(11);
+doc.setFont("helvetica", "bold");
+
+doc.text(
+  selectedSale.status?.toUpperCase() || "UNPAID",
+  165,
+  69,
+  { align: "center" }
+);
+
+doc.setTextColor(0, 0, 0);
 
     doc.setFontSize(12);
     rows.forEach((row, index) => {
@@ -77,7 +93,7 @@ export const generateInvoicePDF = (selectedSale) => {
 
       doc.setFont("helvetica", "normal");
       doc.text(row[1], valueX, y, { align: "right" });
-
+      
       if (index < rows.length - 1) {
         doc.setDrawColor(225, 225, 225);
         doc.line(leftX, y + 3, rightX, y + 3);
