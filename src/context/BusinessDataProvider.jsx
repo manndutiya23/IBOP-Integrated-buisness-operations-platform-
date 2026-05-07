@@ -181,10 +181,9 @@ useEffect(() => {
 
 const createInvoice = async (sale) => {
   try {
-    
+   const subtotal = sale.totalPrice; 
   const gst = subtotal * 0.18;
   const finalAmount = subtotal + gst;
-  const subtotal = sale.totalPrice;
     const invoiceData = {
   saleId: sale._id,
   companyName: sale.companyName,
