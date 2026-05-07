@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const invoiceSchema = new mongoose.Schema({
-  saleId: {
+  sale_Id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Sale",
     required: true
@@ -14,9 +14,7 @@ const invoiceSchema = new mongoose.Schema({
   finalAmount: Number,
   date: Date,
   subtotal: Number,
-gst: Number,
-status: { type: String, default: "unpaid" },
-
+  gst: Number,
   status: {
     type: String,
     enum: ["paid", "unpaid"],

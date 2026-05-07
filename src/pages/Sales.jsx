@@ -17,17 +17,7 @@ console.log(sales);
 
 const handleCreateInvoiceClick = async (sale) => {
   try {
-    await createInvoice({
-      saleId: sale._id,
-      companyName: sale.companyName,
-      productName: sale.productName,
-      quantity: sale.quantity,
-      rate: sale.rate,
-      totalPrice: sale.totalPrice,
-      finalAmount: sale.finalAmount,
-      date: sale.date
-    });
-
+    createInvoice(sale)
     setSelectedSale(sale); // open modal AFTER saving
   } catch (error) {
     console.error("Invoice creation failed:", error);
