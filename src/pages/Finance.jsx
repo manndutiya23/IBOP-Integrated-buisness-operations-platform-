@@ -2,11 +2,27 @@ import { useState } from "react";
 import { useBusinessData } from "../context/BusinessDataContext";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend,
+} from "recharts";
+
 
 function Finance() {
 
   const {
     expenses,
+    sales,
+    invoices,
     addExpense,
     totalRevenue,
     totalExpenses,
@@ -20,40 +36,98 @@ function Finance() {
     category: "Other",
     date: "",
   });
+  const unpaidInvoices = invoices.filter(
+  (invoice) => invoice.status === "unpaid"
+);
+
+const paidInvoices = invoices.filter(
+  (invoice) => invoice.status === "paid"
+);
+
+const pendingPayments = unpaidInvoices.reduce(
+  (sum, invoice) => sum + (invoice.finalAmount || 0),
+  0
+);
+
+const totalGSTCollected = invoices.reduce(
+  (sum, invoice) => sum + (invoice.gst || 0),
+  0
+);
+
+const averageInvoiceValue =
+  invoices.length > 0
+    ? totalRevenue / invoices.length
+    : 0;
+
+ const categoryTotals = {};
+
+expenses.forEach((expense) => {
+  const category = expense.category || "Other";
+
+  if (!categoryTotals[category]) {
+    categoryTotals[category] = 0;
+  }
+
+  categoryTotals[category] += expense.amount;
+});
+
+const expenseCategoryData = Object.entries(categoryTotals).map(
+  ([name, value]) => ({
+    name,
+    value,
+  })
+);
+
+const COLORS = [
+  "#34d399", // emerald
+  "#facc15", // yellow
+  "#60a5fa", // blue
+  "#f87171", // red
+  "#a78bfa", // purple
+  "#fb923c", // orange
+];
+
+const financeComparisonData = [
+  {
+    name: "Finance",
+    Revenue: totalRevenue,
+    Expenses: totalExpenses,
+  },
+];
+
+
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-if (!form.title || !form.amount || !form.date) return;
-try {
- const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!form.title || !form.amount || !form.date) return;
 
-  await addExpense({
-    title: form.title,
-    amount: Number(form.amount),
-    category: form.category,
-    date: form.date,
-  });
+  try {
+    await addExpense({
+      title: form.title,
+      amount: Number(form.amount),
+      category: form.category,
+      date: form.date,
+    });
 
-  setForm({ title: "", amount: "", category: "Other", date: "" });
+    alert("Expense added");
+
+    setForm({
+      title: "",
+      amount: "",
+      category: "Other",
+      date: "",
+    });
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to add expense");
+  }
 };
-
-  alert("Expense added");
-
-} catch (err) {
-  console.error(err);
-  alert("Failed to add expense");
-}
-
-    setForm({ title: "", amount: "", category: "Other", date: "" });
-  };
-
   return (
     <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
 
@@ -107,29 +181,143 @@ try {
         )}
       </div>
 
-  <Link to="/expenses" className="text-emerald-300">
-  View All Expenses →
-</Link>
-      {/* SUMMARY */}
-      <div className="lg:col-span-2 grid grid-cols-3 gap-4 mt-4">
-        <div className="p-4 bg-white/5 rounded-xl">
-          <p>Total Sales</p>
-          <h3>₹{totalRevenue.toLocaleString()}</h3>
-        </div>
+      {/* ANALYTICS */}
+<div className="lg:col-span-2 grid grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
 
-        <div className="p-4 bg-white/5 rounded-xl">
-          <p>Total Expenses</p>
-          <h3>₹{totalExpenses.toLocaleString()}</h3>
-        </div>
+  <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
+    <p className="text-slate-400 text-sm">Total Revenue</p>
+    <h3 className="text-2xl font-bold text-emerald-400">
+      ₹{totalRevenue.toLocaleString()}
+    </h3>
+  </div>
 
-        <div className="p-4 bg-white/5 rounded-xl">
-          <p>Profit</p>
-          <h3 className={profit >= 0 ? "text-green-400" : "text-red-400"}>
-            ₹{profit.toLocaleString()}
-          </h3>
-        </div>
-      </div>
+  <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
+    <p className="text-slate-400 text-sm">Total Expenses</p>
+    <h3 className="text-2xl font-bold text-white">
+      ₹{totalExpenses.toLocaleString()}
+    </h3>
+  </div>
 
+  <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
+    <p className="text-slate-400 text-sm">Profit</p>
+
+    <h3
+      className={`text-2xl font-bold ${
+        profit >= 0
+          ? "text-emerald-400"
+          : "text-red-400"
+      }`}
+    >
+      ₹{profit.toLocaleString()}
+    </h3>
+  </div>
+
+  <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
+    <p className="text-slate-400 text-sm">Pending Payments</p>
+
+    <h3 className="text-2xl font-bold text-yellow-400">
+      ₹{pendingPayments.toLocaleString()}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-1">
+      {unpaidInvoices.length} unpaid invoices
+    </p>
+  </div>
+
+  <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
+    <p className="text-slate-400 text-sm">GST Collected</p>
+
+    <h3 className="text-2xl font-bold text-cyan-400">
+      ₹{totalGSTCollected.toLocaleString()}
+    </h3>
+  </div>
+
+  <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
+    <p className="text-slate-400 text-sm">Avg Invoice Value</p>
+
+    <h3 className="text-2xl font-bold text-white">
+      ₹{averageInvoiceValue.toFixed(2)}
+    </h3>
+  </div>
+
+</div>
+
+<div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6 mt-2">
+
+  {/* PIE CHART */}
+  <div className="bg-white/5 border border-white/10 rounded-3xl p-6">
+    <h3 className="text-xl text-white mb-4">
+      Expense Categories
+    </h3>
+
+    <div className="h-[300px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+
+          <Pie
+  data={expenseCategoryData}
+  dataKey="value"
+  nameKey="name"
+  outerRadius={100}
+  label={({ name, percent }) =>
+    `${name} ${(percent * 100).toFixed(0)}%`
+  }
+>
+  {expenseCategoryData.map((entry, index) => (
+    <Cell
+      key={index}
+      fill={COLORS[index % COLORS.length]}
+    />
+  ))}
+</Pie>
+
+          <Tooltip />
+          <legend />
+
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+
+  {/* BAR CHART */}
+  <div className="bg-white/5 border border-white/10 rounded-3xl p-6">
+    <h3 className="text-xl text-white mb-4">
+      Revenue vs Expenses
+    </h3>
+
+    <div className="h-[300px]">
+      <ResponsiveContainer width="100%" height="100%">
+
+        <BarChart data={financeComparisonData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+
+          <XAxis dataKey="name" stroke="#aaa" />
+
+          <YAxis stroke="#aaa" />
+
+          <Tooltip />
+
+          <Legend />
+
+          <Bar
+            dataKey="Revenue"
+            fill="#34d399"
+            radius={[8, 8, 0, 0]}
+          />
+
+          <Bar
+            dataKey="Expenses"
+            fill="#f87171"
+            radius={[8, 8, 0, 0]}
+          />
+
+        </BarChart>
+
+      </ResponsiveContainer>
+    </div>
+  </div>
+
+</div>
     </section>
   );
 }
