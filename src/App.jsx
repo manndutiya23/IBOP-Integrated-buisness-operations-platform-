@@ -15,6 +15,7 @@ import SalesModule from "./pages/SalesModule";
 import FinanceModule from "./pages/FinanceModule";
 import HRModule from "./pages/HRModule";
 import Invoices from "./pages/Invoices";
+import Purchases from "./pages/Purchases";
 
 function AppContent() {
 const { role, setRole } = useBusinessData();
@@ -26,6 +27,7 @@ const navItems = [
   { label: "New Sale", path: "/sales/new", roles: ["Sales", "Management"] },
   { label: "Supply Chain", path: "/supply-chain", roles: ["Supply Chain", "Management"] },
   {label: "Product List",path: "/products/list",roles: ["Management"]},
+  {label: "Purchases",path: "/purchases",roles: ["Supply Chain", "Management"]},
   { label: "Finance", path: "/finance-module", roles: ["Finance", "Management"] },
   { label: "Expenses", path: "/expenses", roles: ["Finance", "Management"] },
   { label: "HR", path: "/hr-module", roles: ["HR", "Management"] },
@@ -89,6 +91,7 @@ const navItems = [
             <Route path="/hr-module" element={<HRModule />} />
             <Route path="/products" element={<Products />} />
           <Route path="/products/list" element={<ProductList />} />
+          <Route path="/purchases" element={<Purchases />} />
             <Route
               path="/finance"
               element={

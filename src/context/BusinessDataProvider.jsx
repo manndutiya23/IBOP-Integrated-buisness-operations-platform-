@@ -10,6 +10,7 @@ export function BusinessDataProvider({ children }) {
   const [expenses, setExpenses] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [role, setRole] = useState("Management");
+  const [purchases, setPurchases] = useState([]);
 
 
   // Fetch products from backend on component mount
@@ -58,7 +59,20 @@ const fetchInvoices = async () => {
 
 useEffect(() => {
   fetchInvoices();
+  fetchPurchases();
 }, []);
+
+
+const fetchPurchases = async () => {
+  try {
+    const res = await axios.get("http://localhost:5000/api/purchases");
+
+    setPurchases(res.data);
+
+  } catch (error) {
+    console.error("FETCH PURCHASES ERROR:", error);
+  }
+};
 
 
 const createSale = async (saleData) => {
@@ -83,6 +97,24 @@ const createSale = async (saleData) => {
       },
     ]);
   };
+
+  const createPurchase = async (purchaseData) => {
+  try {
+    const res = await axios.post(
+      "http://localhost:5000/api/purchases",
+      purchaseData
+    );
+
+    await fetchPurchases();
+    await fetchProducts();
+    await fetchExpenses();
+
+    return res.data;
+
+  } catch (error) {
+    console.error("CREATE PURCHASE ERROR:", error);
+  }
+};
 
 
   const deleteProduct = async (id) => {
@@ -280,6 +312,8 @@ const deleteEmployee = (id) => {
         deleteEmployee,
         role,
         setRole,
+        purchases,
+        createPurchase,
       }}
     >
       {children}

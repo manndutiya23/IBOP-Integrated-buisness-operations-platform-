@@ -162,9 +162,7 @@ setFormData({
         )}
       </div>
 
-<Link to="/products/list" className="text-emerald-300">
-  View All Products →
-</Link>
+
     </section>
   );
 }

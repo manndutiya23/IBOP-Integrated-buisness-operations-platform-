@@ -141,7 +141,6 @@ const financeComparisonData = [
         <input name="amount" value={form.amount} onChange={handleChange} type="number" placeholder="Amount" className="w-full p-3 bg-slate-900 rounded-xl" required />
 
         <select name="category" value={form.category} onChange={handleChange} className="w-full p-3 bg-slate-900 rounded-xl">
-          <option>Purchase</option>
           <option>Salaries</option>
           <option>Other</option>
         </select>
