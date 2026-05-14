@@ -23,6 +23,7 @@ function Finance() {
     expenses,
     sales,
     invoices,
+    purchases,
     addExpense,
     totalRevenue,
     totalExpenses,
@@ -58,6 +59,30 @@ const averageInvoiceValue =
   invoices.length > 0
     ? totalRevenue / invoices.length
     : 0;
+
+const totalProcurementSpend = purchases.reduce(
+  (sum, purchase) => sum + (purchase.finalAmount || 0),
+  0
+);
+
+const totalPurchasesCount = purchases.length;
+
+const supplierTotals = {};
+
+purchases.forEach((purchase) => {
+  const supplier = purchase.supplierName || "Unknown";
+
+  if (!supplierTotals[supplier]) {
+    supplierTotals[supplier] = 0;
+  }
+
+  supplierTotals[supplier] += purchase.finalAmount || 0;
+});
+
+const topSupplier =
+  Object.entries(supplierTotals).sort(
+    (a, b) => b[1] - a[1]
+  )[0]?.[0] || "N/A";
 
  const categoryTotals = {};
 
@@ -238,7 +263,29 @@ const financeComparisonData = [
       ₹{averageInvoiceValue.toFixed(2)}
     </h3>
   </div>
+<div className="p-5 bg-white/5 rounded-2xl border border-white/10">
+  <p className="text-slate-400 text-sm">
+    Procurement Spend
+  </p>
 
+  <h3 className="text-2xl font-bold text-orange-400">
+    ₹{totalProcurementSpend.toLocaleString()}
+  </h3>
+</div>
+
+<div className="p-5 bg-white/5 rounded-2xl border border-white/10">
+  <p className="text-slate-400 text-sm">
+    Top Supplier
+  </p>
+
+  <h3 className="text-xl font-bold text-white">
+    {topSupplier}
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1">
+    {totalPurchasesCount} purchases
+  </p>
+</div>
 </div>
 
 <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6 mt-2">
