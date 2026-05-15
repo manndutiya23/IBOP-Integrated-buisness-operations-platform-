@@ -11,31 +11,24 @@ export function BusinessDataProvider({ children }) {
   const [employees, setEmployees] = useState([]);
   const [role, setRole] = useState("Management");
   const [purchases, setPurchases] = useState([]);
+  const [invoices, setInvoices] = useState([]);
 
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/products`);
+      // Map _id to id for frontend compatibility
+      const mappedProducts = response.data.map((product) => ({
+        ...product,
+        id: product._id,
+        batch: product.batchNumber,
+        expiry: product.expiryDate,
+      }));
+      setProducts(mappedProducts);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    }
+  };
 
-  // Fetch products from backend on component mount
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/products`);
-        // Map _id to id for frontend compatibility
-        const mappedProducts = response.data.map((product) => ({
-          ...product,
-          id: product._id,
-          batch: product.batchNumber,
-          expiry: product.expiryDate,
-        }));
-        setProducts(mappedProducts);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-
-  useEffect(() => {
   const fetchSales = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/sales`);
@@ -45,47 +38,60 @@ export function BusinessDataProvider({ children }) {
     }
   };
 
+  const fetchInvoices = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/invoices`);
+      setInvoices(res.data);
+    } catch (err) {
+      console.error("Error fetching invoices", err);
+    }
+  };
+
+  const fetchPurchases = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/purchases");
+
+      setPurchases(res.data);
+    } catch (error) {
+      console.error("FETCH PURCHASES ERROR:", error);
+    }
+  };
+
+  const fetchEmployees = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/employees");
+
+      setEmployees(res.data);
+    } catch (error) {
+      console.error("FETCH EMPLOYEES ERROR:", error);
+    }
+  };
+
+  const fetchExpenses = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/expenses");
+      setExpenses(res.data);
+    } catch (error) {
+      console.error("Error fetching expenses", error);
+    }
+  };
+
+  // Fetch products from backend on component mount
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+
+  useEffect(() => {
   fetchSales();
 }, []);
-
-const fetchInvoices = async () => {
-  try {
-    const res = await axios.get(`${API_BASE_URL}/invoices`);
-    setInvoices(res.data);
-  } catch (err) {
-    console.error("Error fetching invoices", err);
-  }
-};
 
 useEffect(() => {
   fetchInvoices();
   fetchPurchases();
 }, []);
 
-
-const fetchPurchases = async () => {
-  try {
-    const res = await axios.get("http://localhost:5000/api/purchases");
-
-    setPurchases(res.data);
-
-  } catch (error) {
-    console.error("FETCH PURCHASES ERROR:", error);
-  }
-};
-
 useEffect(() => {
-  const fetchEmployees = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/employees");
-
-      setEmployees(res.data);
-
-    } catch (error) {
-      console.error("FETCH EMPLOYEES ERROR:", error);
-    }
-  };
-
   fetchEmployees();
 }, []);
 
@@ -167,16 +173,16 @@ const createSale = async (saleData) => {
   }
 };
 useEffect(() => {
-  const fetchExpenses = async () => {
-    const res = await axios.get("http://localhost:5000/api/expenses");
-    setExpenses(res.data);
-  };
-
   fetchExpenses();
 }, []);
 
-  const deleteExpense = (id) => {
-    setExpenses((current) => current.filter((e) => e._id !== id));
+  const deleteExpense = async (id) => {
+    try {
+      await axios.delete(`${API_BASE_URL}/expenses/${id}`);
+      setExpenses((current) => current.filter((e) => e._id !== id));
+    } catch (error) {
+      console.error("Failed to delete expense:", error);
+    }
   };
 
   const totalProducts = products.length;
@@ -184,27 +190,28 @@ useEffect(() => {
   const totalRevenue = sales.reduce((sum, sale) => sum + (sale.totalPrice || 0), 0);
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
   const profit = totalRevenue - totalExpenses;
-  const [invoices, setInvoices] = useState([]);
   const lowStockProducts = products.filter((p) => p.stock < 5);
   
 
   const updateProduct = async (updatedProduct) => {
     try {
-      const product = products.find((p) => p._id === updatedProduct._id || p._id === updatedProduct._id);
+      const product = products.find((p) => p._id === updatedProduct._id);
       if (!product) return;
 
-      const mongoId = product._id || updatedProduct._id;
+      const mongoId = product._id;
+      const mergedProduct = {
+        ...product,
+        ...updatedProduct,
+      };
 
       // Prepare data for API (convert field names back)
       const apiData = {
-        ...updatedProduct,
-        batchNumber: updatedProduct.batch || updatedProduct.batchNumber,
-        expiryDate: updatedProduct.expiry || updatedProduct.expiryDate,
+        name: mergedProduct.name,
+        price: mergedProduct.price,
+        stock: mergedProduct.stock,
+        batchNumber: mergedProduct.batch || mergedProduct.batchNumber,
+        expiryDate: mergedProduct.expiry || mergedProduct.expiryDate,
       };
-      delete apiData._id;
-      delete apiData.batch;
-      delete apiData.expiry;
-      delete apiData._id;
 
       const response = await axios.put(`${API_BASE_URL}/products/${mongoId}`, apiData);
 
@@ -288,7 +295,8 @@ const addEmployee = async (employeeData) => {
       employeeData
     );
 
-    setEmployees((prev) => [res.data, ...prev]);
+    const createdEmployee = res.data?.employee ?? res.data;
+    setEmployees((prev) => [createdEmployee, ...prev]);
 
   } catch (error) {
     console.error("ADD EMPLOYEE ERROR:", error);

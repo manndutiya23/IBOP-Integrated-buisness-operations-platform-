@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useBusinessData } from "../context/BusinessDataContext";
 import { useState } from "react";
 
@@ -74,16 +73,11 @@ const [editData, setEditData] = useState({ price: "", stock: "" });
       <button
   onClick={async () => {
   try {
-    await axios.put(`http://localhost:5000/api/products/${product._id}`, {
+    await updateProduct({
+      _id: product._id,
       price: Number(editData.price),
       stock: Number(editData.stock),
     });
-
-updateProduct({
-  _id: product._id,
-  price: Number(editData.price),
-  stock: Number(editData.stock),
-});
 
     setEditingId(null);
   
