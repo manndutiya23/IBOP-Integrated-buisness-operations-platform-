@@ -7,6 +7,7 @@ import expenseRoutes from "./routes/expenseRoutes.js";
 import saleRoutes from "./routes/saleRoutes.js";
 import invoiceRoutes from "./routes/invoiceRoutes.js";
 import purchaseRoutes from "./routes/purchaseRoutes.js";
+import employeeRoutes from "./routes/employeeRoutes.js";
 
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use("/api/expenses", expenseRoutes);
 app.use("/api/sales", saleRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/purchases", purchaseRoutes);
+app.use("/api/employees", employeeRoutes);
 
 
 app.get("/", (req, res) => {
