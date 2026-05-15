@@ -18,7 +18,7 @@ const Employees = () => {
               <div>
                 <p>{e.name}</p>
                 <p className="text-xs text-slate-400">
-                  {e.designation} • {e.contact} • {e.email}
+                  {e.role} • {e.phone} • {e.email}
                 </p>
               </div>
             {(role === "HR" || role === "Management") && (

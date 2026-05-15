@@ -74,6 +74,21 @@ const fetchPurchases = async () => {
   }
 };
 
+useEffect(() => {
+  const fetchEmployees = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/employees");
+
+      setEmployees(res.data);
+
+    } catch (error) {
+      console.error("FETCH EMPLOYEES ERROR:", error);
+    }
+  };
+
+  fetchEmployees();
+}, []);
+
 
 const createSale = async (saleData) => {
   try {
@@ -266,22 +281,36 @@ const createInvoice = async (sale) => {
   }
 };
 
-  const addEmployee = (emp) => {
-  setEmployees((current) => [
-    {
-      id: Date.now(),
-      ...emp,
-    },
-    ...current,
-  ]);
+const addEmployee = async (employeeData) => {
+  try {
+    const res = await axios.post(
+      "http://localhost:5000/api/employees",
+      employeeData
+    );
+
+    setEmployees((prev) => [res.data, ...prev]);
+
+  } catch (error) {
+    console.error("ADD EMPLOYEE ERROR:", error);
+  }
 };
 
-const deleteEmployee = (id) => {
-  setEmployees((current) =>
-    current.filter((e) => e._id !== id)
-  );
+const deleteEmployee = async (id) => {
+  try {
+    await axios.delete(
+      `http://localhost:5000/api/employees/${id}`
+    );
+
+    setEmployees((current) =>
+      current.filter((e) => e._id !== id)
+    );
+
+  } catch (error) {
+    console.error("DELETE EMPLOYEE ERROR:", error);
+  }
 };
-  
+
+
   return (
     <BusinessDataContext.Provider
       value={{

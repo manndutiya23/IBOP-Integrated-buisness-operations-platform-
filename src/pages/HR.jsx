@@ -6,24 +6,38 @@ function HR() {
   const { addEmployee, role } = useBusinessData();
 
   const [form, setForm] = useState({
-    name: "",
-    designation: "",
-    contact: "",
-    email: "",
+  name: "",
+  email: "",
+  role: "",
+  department: "",
+  salary: "",
+  phone: "",
+  joiningDate: "",
   });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
 
-    if (!form.name || !form.designation || !form.contact || !form.email) return;
+    if (!form.name || !form.role || !form.department || !form.salary || !form.phone || !form.joiningDate) return;
 
-    addEmployee(form);
+    await addEmployee({
+  ...form,
+  salary: Number(form.salary),
+});
 
-    setForm({ name: "", designation: "", contact: "", email: "" });
+    setForm({
+  name: "",
+  email: "",
+  role: "",
+  department: "",
+  salary: "",
+  phone: "",
+  joiningDate: "",
+});
   };
 
   return (
@@ -45,20 +59,6 @@ function HR() {
           className="w-full p-3 bg-slate-900 rounded-xl"
           required
         />
-
-        <select
-  name="designation"
-  value={form.designation}
-  onChange={handleChange}
-  className="w-full p-3 bg-slate-900 rounded-xl"
-  required
->
-  <option value="">Select Role</option>
-  <option>Management</option>
-  <option>Sales</option>
-  <option>Finance</option>
-  <option>HR</option>
-</select>
         <input
           name="email"
           value={form.email}
@@ -67,16 +67,57 @@ function HR() {
           className="w-full p-3 bg-slate-900 rounded-xl"
           required
         />
+<select
+  name="role"
+  value={form.role}
+  onChange={handleChange}
+  className="w-full rounded-xl bg-slate-900 p-3"
+  required
+>
+  <option value="">Select Role</option>
+  <option value="Admin">Admin</option>
+  <option value="Management">Management</option>
+  <option value="Finance">Finance</option>
+  <option value="Sales">Sales</option>
+  <option value="Supply Chain">Supply Chain</option>
+  <option value="HR">HR</option>
+</select>
 
-        <input
-          name="contact"
-          value={form.contact}
-          onChange={handleChange}
-          placeholder="Contact"
-          className="w-full p-3 bg-slate-900 rounded-xl"
-          required
-        />
-
+<input
+  type="text"
+  name="department"
+  placeholder="Department"
+  value={form.department}
+  onChange={handleChange}
+  className="w-full rounded-xl bg-slate-900 p-3"
+  required
+/>
+<input
+  type="number"
+  name="salary"
+  placeholder="Salary"
+  value={form.salary}
+  onChange={handleChange}
+  className="w-full rounded-xl bg-slate-900 p-3"
+  required
+/>
+  <input
+  type="text"
+  name="phone"
+  placeholder="Phone"
+  value={form.phone}
+  onChange={handleChange}
+  className="w-full rounded-xl bg-slate-900 p-3"
+  required
+/>
+  <input
+  type="date"
+  name="joiningDate"
+  value={form.joiningDate}
+  onChange={handleChange}
+  className="w-full rounded-xl bg-slate-900 p-3"
+  required
+/>
         <button className="bg-emerald-400 px-5 py-2 rounded-full text-black">
           Add Employee
         </button>
