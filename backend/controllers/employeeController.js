@@ -1,4 +1,6 @@
 import Employee from "../models/Employee.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 
 // GENERATE DEFAULT PASSWORD
@@ -43,17 +45,22 @@ export const createEmployee = async (req, res) => {
       email,
       phone
     );
+// hash password
+const hashedPassword = await bcrypt.hash(
+  generatedPassword,
+  10
+);
 
-    const employee = new Employee({
-      name,
-      email,
-      password: generatedPassword,
-      role,
-      department,
-      salary,
-      phone,
-      joiningDate,
-    });
+const employee = new Employee({
+  name,
+  email,
+  password: hashedPassword,
+  role,
+  department,
+  salary,
+  phone,
+  joiningDate,
+});
 
     await employee.save();
 
@@ -135,6 +142,75 @@ export const deleteEmployee = async (
 
     res.status(500).json({
       message: "Failed to delete employee",
+    });
+  }
+};
+
+// LOGIN
+export const loginEmployee = async (
+  req,
+  res
+) => {
+  try {
+
+    const { email, password } = req.body;
+
+    // check employee
+    const employee = await Employee.findOne({
+      email,
+    });
+
+    if (!employee) {
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+    }
+
+    // compare password
+    const isMatch = await bcrypt.compare(
+      password,
+      employee.password
+    );
+
+    if (!isMatch) {
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
+    }
+
+    // create JWT token
+    const token = jwt.sign(
+      {
+        id: employee._id,
+        role: employee.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    res.json({
+      token,
+
+      employee: {
+        _id: employee._id,
+        name: employee.name,
+        email: employee.email,
+        role: employee.role,
+        department: employee.department,
+      },
+    });
+
+  } catch (error) {
+
+    console.error(
+      "LOGIN ERROR:",
+      error
+    );
+
+    res.status(500).json({
+      message: "Login failed",
     });
   }
 };
