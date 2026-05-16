@@ -153,6 +153,7 @@ const navItems = [
     </ProtectedRoute>
   }
 />
+            <Route path="/finance" element={<ProtectedRoute allowedRoles={["Finance", "Management", "Admin"]}><Finance /></ProtectedRoute>} />
             <Route path="/expenses" element={<ProtectedRoute allowedRoles={["Finance", "Management", "Admin"]}><Expenses /></ProtectedRoute>} />
             <Route path="/invoices" element={<ProtectedRoute allowedRoles={["Finance", "Management", "Admin"]}><Invoices /></ProtectedRoute>} />
             <Route path="/employees" element={<ProtectedRoute allowedRoles={["HR", "Management", "Admin"]}><Employees /></ProtectedRoute>} />

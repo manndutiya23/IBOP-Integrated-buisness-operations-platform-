@@ -5,9 +5,33 @@ import {
   getPurchases,
 } from "../controllers/purchaseController.js";
 
+import {
+  protect,
+  authorizeRoles,
+} from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
-router.post("/", createPurchase);
-router.get("/", getPurchases);
+router.post(
+  "/",
+  protect,
+  authorizeRoles(
+    "Admin",
+    "Supply Chain",
+    "Management"
+  ),
+  createPurchase
+);
+
+router.get(
+  "/",
+  protect,
+  authorizeRoles(
+    "Admin",
+    "Supply Chain",
+    "Management"
+  ),
+  getPurchases
+);
 
 export default router;

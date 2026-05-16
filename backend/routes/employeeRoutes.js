@@ -7,14 +7,35 @@ import {
   loginEmployee
 } from "../controllers/employeeController.js";
 
+import {
+  protect,
+  authorizeRoles,
+} from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
-router.post("/", createEmployee);
+
 
 router.post("/login", loginEmployee);
+router.post(
+  "/",
+  protect,
+  authorizeRoles("Admin", "HR"),
+  createEmployee
+);
 
-router.get("/", getEmployees);
+router.get(
+  "/",
+  protect,
+  authorizeRoles("Admin", "HR"),
+  getEmployees
+);
 
-router.delete("/:id", deleteEmployee);
+router.delete(
+  "/:id",
+  protect,
+  authorizeRoles("Admin", "HR"),
+  deleteEmployee
+);
 
 export default router;
