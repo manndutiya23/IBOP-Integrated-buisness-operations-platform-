@@ -6,12 +6,19 @@ function ProtectedRoute({
   allowedRoles,
 }) {
 
-  const { user } = useAuth();
-
+  const { user, loading } = useAuth();
+  // while loading
+  if (loading) {
+    return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">Loading...</div>;
+  }
   // not logged in
   if (!user) {
     return <Navigate to="/login" />;
   }
+
+
+
+  
 
   // role check
   if (

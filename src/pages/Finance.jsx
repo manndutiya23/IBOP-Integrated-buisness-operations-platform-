@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useBusinessData } from "../context/BusinessDataContext";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import {
   PieChart,
   Pie,
@@ -172,7 +171,7 @@ const financeComparisonData = [
 
         <input name="date" value={form.date} onChange={handleChange} type="date" className="w-full p-3 bg-slate-900 rounded-xl" required />
 
-        <button className="bg-emerald-400 px-5 py-2 rounded-full text-black">
+        <button type="submit" className="bg-emerald-400 px-5 py-2 rounded-full text-black">
           Add Expense
         </button>
       </form>

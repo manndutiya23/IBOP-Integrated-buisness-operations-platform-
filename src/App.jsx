@@ -25,7 +25,7 @@ const { user, logout } = useAuth();
 
 
 const navItems = [
-  { label: "Dashboard", path: "/", roles: ["Admin", "Management", "Sales", "Finance", "HR"] },
+  { label: "Dashboard", path: "/", roles: ["Admin", "Management", "Sales", "Finance", "HR", "Supply Chain"] },
   { label: "Sales", path: "/sales-module", roles: ["Sales", "Management", "Admin"] },
   { label: "New Sale", path: "/sales/new", roles: ["Sales", "Management", "Admin"] },
   { label: "Supply Chain", path: "/supply-chain", roles: ["Supply Chain", "Management", "Admin"] },
@@ -88,6 +88,7 @@ const navItems = [
   element={
     <ProtectedRoute>
       <Dashboard />
+
     </ProtectedRoute>
   }
 />
@@ -136,7 +137,7 @@ const navItems = [
   }
 />
             <Route path="/products" element={<ProtectedRoute allowedRoles={["Supply Chain", "Management", "Admin"]}><Products /></ProtectedRoute>} />
-          <Route path="/products/list" element={<ProtectedRoute allowedRoles={["Supply Chain", "Management", "Admin"]}><Products /></ProtectedRoute>} />
+          <Route path="/products/list" element={<ProtectedRoute allowedRoles={["Supply Chain", "Management", "Admin"]}><ProductList /></ProtectedRoute>} />
           <Route path="/purchases" element={<ProtectedRoute allowedRoles={["Supply Chain", "Management", "Admin"]}><Purchases /></ProtectedRoute  >} />
           <Route
   path="/finance-module"

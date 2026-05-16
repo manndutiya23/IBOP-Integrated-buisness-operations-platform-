@@ -9,17 +9,21 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(
     localStorage.getItem("token") || null
   );
+  const [loading, setLoading] = useState(true);
 
-  // restore session on refresh
+
+
   useEffect(() => {
 
-    const storedUser = localStorage.getItem("user");
+  const storedUser = localStorage.getItem("user");
 
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+  if (storedUser) {
+    setUser(JSON.parse(storedUser));
+  }
 
-  }, []);
+  setLoading(false);
+
+}, []);
 
   // LOGIN
   const login = (employee, jwtToken) => {
@@ -58,6 +62,7 @@ export const AuthProvider = ({ children }) => {
         token,
         login,
         logout,
+        loading,
       }}
     >
       {children}
