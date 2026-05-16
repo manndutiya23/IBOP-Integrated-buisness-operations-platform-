@@ -21,7 +21,6 @@ function Finance() {
 
   const {
     expenses,
-    sales,
     invoices,
     purchases,
     addExpense,
@@ -40,10 +39,6 @@ function Finance() {
   });
   const unpaidInvoices = invoices.filter(
   (invoice) => invoice.status === "unpaid"
-);
-
-const paidInvoices = invoices.filter(
-  (invoice) => invoice.status === "paid"
 );
 
 const pendingPayments = unpaidInvoices.reduce(

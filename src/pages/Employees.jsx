@@ -24,7 +24,7 @@ const Employees = () => {
                   {e.role} • {e.phone} • {e.email}
                 </p>
               </div>
-            {(role === "HR" || role === "Management") && (
+            {(role === "HR" || role === "Admin") && (
               <button
                 onClick={() => deleteEmployee(e._id)}
                 className="text-red-400 text-sm"

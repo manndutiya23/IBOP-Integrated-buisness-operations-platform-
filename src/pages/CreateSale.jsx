@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 
 function CreateSale() {
   const navigate = useNavigate();
-  const { products, createSale } = useBusinessData();
+  const { products } = useBusinessData();
   const { user } = useAuth();
   const role = user?.role;
   const [formData, setFormData] = useState({
@@ -66,8 +66,6 @@ const handleSubmit = async (event) => {
     salesperson: formData.salesperson.trim(),
     date: new Date(formData.date),
   };
-
-  console.log("SENDING:", payload);
 
   try {
     await API.post("/sales", payload);

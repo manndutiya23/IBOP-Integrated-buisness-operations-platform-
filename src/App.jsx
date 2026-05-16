@@ -6,7 +6,6 @@ import Products from "./pages/Products";
 import CreateSale from "./pages/CreateSale";
 import { BusinessDataProvider } from "./context/BusinessDataProvider";
 import Finance from "./pages/Finance";
-import { useBusinessData } from "./context/BusinessDataContext";
 import ProductList from "./pages/ProductList";
 import Expenses from "./pages/Expenses";
 import Employees from "./pages/Employees";
@@ -29,12 +28,12 @@ const navItems = [
   { label: "Sales", path: "/sales-module", roles: ["Sales", "Management", "Admin"] },
   { label: "New Sale", path: "/sales/new", roles: ["Sales", "Management", "Admin"] },
   { label: "Supply Chain", path: "/supply-chain", roles: ["Supply Chain", "Management", "Admin"] },
-  {label: "Product List",path: "/products/list",roles: ["Management", "Admin"]},
+  {label: "Product List",path: "/products/list",roles: ["Supply Chain", "Management", "Admin"]},
   {label: "Purchases",path: "/purchases",roles: ["Supply Chain", "Management", "Admin"]},
   { label: "Finance", path: "/finance-module", roles: ["Finance", "Management", "Admin"] },
   { label: "Expenses", path: "/expenses", roles: ["Finance", "Management", "Admin"] },
-  { label: "HR", path: "/hr-module", roles: ["HR", "Management", "Admin"] },
-  { label: "Employees", path: "/employees", roles: ["HR", "Management", "Admin"] },
+  { label: "HR", path: "/hr-module", roles: ["HR", "Admin"] },
+  { label: "Employees", path: "/employees", roles: ["HR", "Admin"] },
 
 ];
   return (
@@ -128,7 +127,6 @@ const navItems = [
     <ProtectedRoute
       allowedRoles={[
         "HR",
-        "Management",
         "Admin",
       ]}
     >
@@ -156,8 +154,8 @@ const navItems = [
             <Route path="/finance" element={<ProtectedRoute allowedRoles={["Finance", "Management", "Admin"]}><Finance /></ProtectedRoute>} />
             <Route path="/expenses" element={<ProtectedRoute allowedRoles={["Finance", "Management", "Admin"]}><Expenses /></ProtectedRoute>} />
             <Route path="/invoices" element={<ProtectedRoute allowedRoles={["Finance", "Management", "Admin"]}><Invoices /></ProtectedRoute>} />
-            <Route path="/hr" element={<ProtectedRoute allowedRoles={["HR", "Management", "Admin"]}><HR /></ProtectedRoute>} />
-            <Route path="/employees" element={<ProtectedRoute allowedRoles={["HR", "Management", "Admin"]}><Employees /></ProtectedRoute>} />
+            <Route path="/hr" element={<ProtectedRoute allowedRoles={["HR", "Admin"]}><HR /></ProtectedRoute>} />
+            <Route path="/employees" element={<ProtectedRoute allowedRoles={["HR", "Admin"]}><Employees /></ProtectedRoute>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>

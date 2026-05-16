@@ -1,6 +1,5 @@
 import jsPDF from "jspdf";
 import letterhead from "../assets/letterhead.png";
-import { useBusinessData } from "../context/BusinessDataContext";
 
 
 
@@ -42,7 +41,6 @@ export const generateInvoicePDF = (selectedSale) => {
     const imageWidth = pageWidth - 20;
     const imageProps = doc.getImageProperties(letterhead);
     const imageHeight = (imageProps.height * imageWidth) / imageProps.width;
-    const separatorY = imageY + imageHeight + 4;
     const rowStartY = 85;
     const rowHeight = 12;
 

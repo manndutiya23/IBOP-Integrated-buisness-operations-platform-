@@ -1,6 +1,5 @@
 import { useBusinessData } from "../context/BusinessDataContext";
 import API from "../utils/axiosConfig";
-import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 const Expenses = () => {
@@ -46,7 +45,7 @@ const Expenses = () => {
 
               <div className="text-right">
                 <p>₹{e.amount}</p>
-                {(role === "Finance" || role === "Management") && (
+                {(role === "Finance" || role === "Management" || role === "Admin") && (
                 <button onClick={() => deleteExpense(e._id)} className="text-red-400 text-sm">
                   Delete
                 </button>

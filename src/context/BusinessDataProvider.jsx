@@ -143,7 +143,7 @@ const createSale = async (saleData) => {
   const deleteProduct = async (id) => {
     try {
       // Find the product to get the _id if only id is provided
-      const product = products.find((p) => p._id === id || p._id === id);
+      const product = products.find((p) => p._id === id);
       if (!product) return;
 
       const mongoId = product._id || id;
@@ -265,8 +265,6 @@ const createInvoice = async (sale) => {
   dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     };
   
-    console.log("SALE OBJECT:", sale);
-    console.log("SENDING TO BACKEND:", invoiceData);
     await API.post("/invoices", invoiceData);
 
     fetchInvoices();
@@ -274,14 +272,6 @@ const createInvoice = async (sale) => {
     console.error("CREATE INVOICE ERROR:", err);
   }
 };
-
-  const togglePayment = (id) => {
-    setInvoices((current) =>
-      current.map((inv) =>
-        inv._id === id ? { ...inv, paid: !inv.paid } : inv
-      )
-    );
-  };
 
   const toggleInvoiceStatus = async (invoiceId) => {
   try {
@@ -351,7 +341,6 @@ const deleteEmployee = async (id) => {
         invoices,
         setInvoices,
         createInvoice,
-        togglePayment,
         toggleInvoiceStatus,
         employees,
         setEmployees,

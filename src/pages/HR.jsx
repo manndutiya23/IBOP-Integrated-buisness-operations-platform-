@@ -47,7 +47,7 @@ function HR() {
     <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
 
       {/* FORM */}
-      {(role === "HR" || role === "Management" || role === "Admin") && (
+      {(role === "HR" || role === "Admin") && (
         <form
           onSubmit={handleSubmit}
           className="space-y-4 bg-white/5 p-6 rounded-3xl border border-white/10"

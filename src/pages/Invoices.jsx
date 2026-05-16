@@ -1,17 +1,10 @@
 import { useBusinessData } from "../context/BusinessDataContext";
-import { jsPDF } from "jspdf";
 import { generateInvoicePDF } from "../utils/pdfGenerator";
 import { useState } from "react";
 
 function Invoices() {
-  const { invoices, createInvoice, toggleInvoiceStatus } = useBusinessData();
+  const { invoices, toggleInvoiceStatus } = useBusinessData();
   const [selectedInvoice, setSelectedInvoice] = useState(null);
-  
-  const handleCreateInvoice = (sale) => {
-  createInvoice(sale);
-};
-
-  console.log("Invoices Page Invoices:", invoices);
 
   return (
     <section className="space-y-6">

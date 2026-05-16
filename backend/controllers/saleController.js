@@ -10,7 +10,6 @@ export const createSale = async (req, res) => {
       rate,
       totalPrice,
       discount,
-      finalAmount,
       salesperson,
       date,
     } = req.body;

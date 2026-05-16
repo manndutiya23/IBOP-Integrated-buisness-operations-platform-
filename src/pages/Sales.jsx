@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useBusinessData } from "../context/BusinessDataContext";
-import {jsPDF} from "jspdf";
-import letterhead from "../assets/letterhead.png";
 import { generateInvoicePDF } from "../utils/pdfGenerator";
 import { useAuth } from "../context/AuthContext";
 
@@ -11,7 +9,6 @@ const Sales = () => {
   const { user } = useAuth();
   const role = user?.role;
   const [selectedSale, setSelectedSale] = useState(null);
-console.log(sales);
 
   
   const handlePrint = () => {
@@ -34,7 +31,7 @@ const handleCreateInvoiceClick = async (sale) => {
           <p className="text-sm uppercase tracking-[0.3em] text-emerald-300">Sales</p>
           <h2 className="mt-2 text-3xl font-semibold tracking-tight text-white">Sales records</h2>
         </div>
-{(role === "Sales" || role === "Management") && (
+{(role === "Sales" || role === "Management" || role === "Admin") && (
         <Link
           to="/sales/new"
           className="rounded-full bg-emerald-400 px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300"
@@ -74,7 +71,7 @@ const handleCreateInvoiceClick = async (sale) => {
               <div className="flex flex-col items-center gap-2 justify-center">
                 <p className="text-lg text-white">No sales yet</p>
                 <p className="text-sm">Add new sales</p>
-                {(role === "Sales" || role === "Management") && (
+                {(role === "Sales" || role === "Management" || role === "Admin") && (
                 <Link
                   to="/sales/new"
                   className="mt-2 px-4 py-2 rounded-full bg-emerald-400 text-slate-900 text-sm font-semibold"
@@ -104,7 +101,7 @@ const handleCreateInvoiceClick = async (sale) => {
   
                 <td className="text-right">
   <div className="flex flex-col gap-1 text-center items-center justify-center">
-    {(role === "Sales" || role === "Management") && (
+    {(role === "Sales" || role === "Management" || role === "Admin") && (
    <button
       onClick={() => handleCreateInvoiceClick(sale)}
       className="text-emerald-400 text-sm hover:text-emerald-300"
@@ -112,7 +109,7 @@ const handleCreateInvoiceClick = async (sale) => {
       Invoice
     </button>
     )}
-    {(role === "Sales" || role === "Management") && (
+    {(role === "Sales" || role === "Management" || role === "Admin") && (
     <button
       onClick={() => deleteSale(sale._id)}
       className="text-red-400 text-sm hover:text-red-300"

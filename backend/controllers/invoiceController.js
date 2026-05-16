@@ -3,8 +3,6 @@ import Invoice from "../models/Invoice.js";
 
 export const createInvoice = async (req, res) => {
   try {
-    console.log("INCOMING DATA:", req.body);
-
     const subtotal = Number(req.body.totalPrice || 0);
     const discountPercent = Number(req.body.discountPercent ?? req.body.discount ?? 0);
     const discountAmount = Number(req.body.discountAmount ?? subtotal * (discountPercent / 100));
