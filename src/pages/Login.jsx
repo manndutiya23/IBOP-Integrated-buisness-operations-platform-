@@ -28,7 +28,7 @@ function Login() {
 
     try {
 
-      const res = await axios.post(
+      const res = await API.post(
         "http://localhost:5000/api/employees/login",
         form
       );

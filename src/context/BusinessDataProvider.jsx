@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { BusinessDataContext } from "./BusinessDataContext";
-import axios from "axios";
+import API from "../utils/axiosConfig";
 
 const API_BASE_URL = "http://localhost:5000/api";
 
@@ -15,7 +15,7 @@ export function BusinessDataProvider({ children }) {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/products`);
+      const response = await API.get(`${API_BASE_URL}/products`);
       // Map _id to id for frontend compatibility
       const mappedProducts = response.data.map((product) => ({
         ...product,
@@ -31,7 +31,7 @@ export function BusinessDataProvider({ children }) {
 
   const fetchSales = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/sales`);
+      const res = await API.get("/sales");
       setSales(res.data);
     } catch (err) {
       console.error("Error fetching sales", err);
@@ -40,7 +40,7 @@ export function BusinessDataProvider({ children }) {
 
   const fetchInvoices = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/invoices`);
+      const res = await API.get("/invoices");
       setInvoices(res.data);
     } catch (err) {
       console.error("Error fetching invoices", err);
@@ -49,7 +49,7 @@ export function BusinessDataProvider({ children }) {
 
   const fetchPurchases = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/purchases");
+      const res = await API.get("/purchases");
 
       setPurchases(res.data);
     } catch (error) {
@@ -59,7 +59,7 @@ export function BusinessDataProvider({ children }) {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/employees");
+      const res = await API.get("/employees");
 
       setEmployees(res.data);
     } catch (error) {
@@ -69,7 +69,7 @@ export function BusinessDataProvider({ children }) {
 
   const fetchExpenses = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/expenses");
+      const res = await API.get("/expenses");
       setExpenses(res.data);
     } catch (error) {
       console.error("Error fetching expenses", error);
@@ -98,8 +98,8 @@ useEffect(() => {
 
 const createSale = async (saleData) => {
   try {
-    const res = await axios.post(
-      "http://localhost:5000/api/sales",
+    const res = await API.post(
+      "/sales",
       saleData
     );
 
@@ -121,8 +121,8 @@ const createSale = async (saleData) => {
 
   const createPurchase = async (purchaseData) => {
   try {
-    const res = await axios.post(
-      "http://localhost:5000/api/purchases",
+    const res = await API.post(
+      "/purchases",
       purchaseData
     );
 
@@ -146,7 +146,7 @@ const createSale = async (saleData) => {
 
       const mongoId = product._id || id;
 
-      await axios.delete(`${API_BASE_URL}/products/${mongoId}`);
+      await API.delete(`/products/${mongoId}`);
       setProducts((products) => products.filter((p) => p._id !== id && p._id !== mongoId));
     } catch (error) {
       console.error("Failed to delete product:", error);
@@ -155,7 +155,7 @@ const createSale = async (saleData) => {
 
   const deleteSale = async (id) => {
     try {
-      await axios.delete(`${API_BASE_URL}/sales/${id}`);
+      await API.delete(`/sales/${id}`);
       setSales((sales) => sales.filter((s) => s._id !== id));
           } catch (error) {
       console.error("Failed to delete sale:", error);
@@ -164,7 +164,7 @@ const createSale = async (saleData) => {
 
   const addExpense = async (expense) => {
   try {
-    const res = await axios.post("http://localhost:5000/api/expenses", expense);
+    const res = await API.post("/expenses", expense);
 
     setExpenses((prev) => [...prev, res.data]);
 
@@ -178,7 +178,7 @@ useEffect(() => {
 
   const deleteExpense = async (id) => {
     try {
-      await axios.delete(`${API_BASE_URL}/expenses/${id}`);
+      await API.delete(`/expenses/${id}`);
       setExpenses((current) => current.filter((e) => e._id !== id));
     } catch (error) {
       console.error("Failed to delete expense:", error);
@@ -213,7 +213,7 @@ useEffect(() => {
         expiryDate: mergedProduct.expiry || mergedProduct.expiryDate,
       };
 
-      const response = await axios.put(`${API_BASE_URL}/products/${mongoId}`, apiData);
+      const response = await API.put(`/products/${mongoId}`, apiData);
 
       // Update local state with mapped data
       const mappedProduct = {
@@ -257,7 +257,7 @@ const createInvoice = async (sale) => {
   
     console.log("SALE OBJECT:", sale);
     console.log("SENDING TO BACKEND:", invoiceData);
-    await axios.post("http://localhost:5000/api/invoices", invoiceData);
+    await API.post("/invoices", invoiceData);
 
     fetchInvoices();
   } catch (err) {
@@ -275,8 +275,8 @@ const createInvoice = async (sale) => {
 
   const toggleInvoiceStatus = async (invoiceId) => {
   try {
-    await axios.patch(
-      `http://localhost:5000/api/invoices/${invoiceId}/status`
+    await API.patch(
+      `/invoices/${invoiceId}/status`
     );
 
     fetchInvoices();
@@ -290,8 +290,8 @@ const createInvoice = async (sale) => {
 
 const addEmployee = async (employeeData) => {
   try {
-    const res = await axios.post(
-      "http://localhost:5000/api/employees",
+    const res = await API.post(
+      "/employees",
       employeeData
     );
 
@@ -305,8 +305,8 @@ const addEmployee = async (employeeData) => {
 
 const deleteEmployee = async (id) => {
   try {
-    await axios.delete(
-      `http://localhost:5000/api/employees/${id}`
+    await API.delete(
+      `/employees/${id}`
     );
 
     setEmployees((current) =>

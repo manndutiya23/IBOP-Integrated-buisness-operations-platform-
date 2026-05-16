@@ -67,7 +67,7 @@ const handleSubmit = async (event) => {
   console.log("SENDING:", payload);
 
   try {
-    await axios.post("http://localhost:5000/api/sales", payload);
+    await API.post("http://localhost:5000/api/sales", payload);
     navigate("/sales");
   } catch (err) {
     console.error("ERROR:", err.response?.data || err.message);

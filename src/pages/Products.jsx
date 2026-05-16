@@ -25,7 +25,7 @@ const handleSubmit = async (event) => {
   event.preventDefault();
 
   try {
-const res = await axios.post("http://localhost:5000/api/products", {
+const res = await API.post("http://localhost:5000/api/products", {
   name: formData.name.trim(),
   price: Number(formData.price),
   stock: Number(formData.stock),
