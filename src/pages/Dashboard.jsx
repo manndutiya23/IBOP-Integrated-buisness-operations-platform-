@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useBusinessData } from "../context/BusinessDataContext";
+import { useAuth } from "../context/AuthContext";
 import {
   ResponsiveContainer,
   LineChart,
@@ -17,15 +18,16 @@ function Dashboard() {
       totalSales,
      totalRevenue,
       lowStockProducts,
-      role,
       sales,
   } = useBusinessData();
+  const { user } = useAuth();
+  const role = user?.role;
 
   const modules = [
-    { name: "Sales", path: "/sales-module",  roles: ["Sales", "Management"], description: "Track orders and create new sales" },
-    { name: "Finance", path: "/finance-module", roles: ["Finance", "Management"], description: "Manage financial records and reports" },
-    { name: "Supply chain", path: "/supply-chain", roles: ["Supply Chain", "Management"], description: "Manage supply chain operations" },
-    { name: "HR", path: "/hr-module", roles: ["HR", "Management"], description: "Manage human resources" },
+    { name: "Sales", path: "/sales-module",  roles: ["Sales", "Management", "Admin"], description: "Track orders and create new sales" },
+    { name: "Finance", path: "/finance-module", roles: ["Finance", "Management", "Admin"], description: "Manage financial records and reports" },
+    { name: "Supply chain", path: "/supply-chain", roles: ["Supply Chain", "Management", "Admin"], description: "Manage supply chain operations" },
+    { name: "HR", path: "/hr-module", roles: ["HR", "Management", "Admin"], description: "Manage human resources" },
   ];
 
   const monthlyDataMap = {};

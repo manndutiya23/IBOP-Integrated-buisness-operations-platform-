@@ -6,10 +6,11 @@ export const createInvoice = async (req, res) => {
     console.log("INCOMING DATA:", req.body);
 
     const subtotal = Number(req.body.totalPrice || 0);
-
-    const gst = subtotal * 0.18;
-
-    const finalAmount = subtotal + gst;
+    const discountPercent = Number(req.body.discountPercent ?? req.body.discount ?? 0);
+    const discountAmount = Number(req.body.discountAmount ?? subtotal * (discountPercent / 100));
+    const taxable = subtotal - discountAmount;
+    const gst = Number(req.body.gst ?? taxable * 0.18);
+    const finalAmount = Number(req.body.finalAmount ?? taxable + gst);
 
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 7);
@@ -18,6 +19,8 @@ export const createInvoice = async (req, res) => {
       ...req.body,
 
       subtotal,
+      discountPercent,
+      discountAmount,
       gst,
       finalAmount,
 

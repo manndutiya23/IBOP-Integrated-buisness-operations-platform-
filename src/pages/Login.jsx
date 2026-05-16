@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import API from "../utils/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -28,10 +28,7 @@ function Login() {
 
     try {
 
-      const res = await API.post(
-        "http://localhost:5000/api/employees/login",
-        form
-      );
+      const res = await API.post("/employees/login", form);
 
       login(
         res.data.employee,

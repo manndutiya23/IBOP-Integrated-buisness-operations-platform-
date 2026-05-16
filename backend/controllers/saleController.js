@@ -42,7 +42,11 @@ export const createSale = async (req, res) => {
       : numericQuantity * numericRate;
     const numericDiscount = Number.isFinite(Number(discount)) ? Number(discount) : 0;
     const discountAmount = numericTotalPrice * (numericDiscount / 100);
-    const numericFinalAmount = numericTotalPrice - discountAmount;
+    // GST rate (18%) - this represents tax applied to the taxable amount (after discount)
+    const GST_RATE = 0.18;
+    const taxableAmount = numericTotalPrice - discountAmount;
+    const gstAmount = taxableAmount * GST_RATE;
+    const numericFinalAmount = taxableAmount + gstAmount;
     const saleDate = date ? new Date(date) : new Date();
 
     if (Number.isNaN(saleDate.getTime())) {
@@ -86,7 +90,10 @@ export const getSales = async (req, res) => {
       const rate = sale.rate ?? product?.price ?? 0;
       const total = sale.totalPrice ?? rate * sale.quantity;
       const discount = sale.discount ?? 0;
-      const finalAmount = sale.finalAmount ?? total - discount;
+      const discountAmount = total * (discount / 100);
+      const taxable = total - discountAmount;
+      const gst = taxable * 0.18;
+      const finalAmount = sale.finalAmount ?? taxable + gst;
 
       return {
         _id: sale._id,

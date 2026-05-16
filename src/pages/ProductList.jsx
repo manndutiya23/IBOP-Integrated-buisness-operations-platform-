@@ -1,9 +1,12 @@
 import { useBusinessData } from "../context/BusinessDataContext";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 
 function ProductList() {
-const { products, deleteProduct, updateProduct, role } = useBusinessData();
+const { products, deleteProduct, updateProduct } = useBusinessData();
+const { user } = useAuth();
+const role = user?.role;
 const [editingId, setEditingId] = useState(null);
 const [editData, setEditData] = useState({ price: "", stock: "" });
   return (
@@ -67,7 +70,7 @@ const [editData, setEditData] = useState({ price: "", stock: "" });
                 <td className="px-4 py-4">  {new Date(product.expiryDate).toLocaleDateString()}</td>
 <td className="px-4 py-4">
   <div className="flex flex-col items-end gap-1">
-{(role === "Management" || role === "Supply Chain") && (
+{(role === "Management" || role === "Supply Chain" || role === "Admin") && (
     editingId === product._id ? (
       
       <button
@@ -107,7 +110,7 @@ const [editData, setEditData] = useState({ price: "", stock: "" });
       </button>
     )
 )}
-{(role === "Management" || role === "Supply Chain") && (
+{(role === "Management" || role === "Supply Chain" || role === "Admin") && (
     <button
       onClick={() => deleteProduct(product._id)}
       className="text-red-400 hover:text-red-300"

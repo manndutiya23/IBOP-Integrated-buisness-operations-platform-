@@ -4,9 +4,12 @@ import { useBusinessData } from "../context/BusinessDataContext";
 import {jsPDF} from "jspdf";
 import letterhead from "../assets/letterhead.png";
 import { generateInvoicePDF } from "../utils/pdfGenerator";
+import { useAuth } from "../context/AuthContext";
 
 const Sales = () => {
-  const { sales, deleteSale, createInvoice, role } = useBusinessData();
+  const { sales, deleteSale, createInvoice } = useBusinessData();
+  const { user } = useAuth();
+  const role = user?.role;
   const [selectedSale, setSelectedSale] = useState(null);
 console.log(sales);
 

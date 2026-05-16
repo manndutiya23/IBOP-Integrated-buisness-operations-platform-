@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useBusinessData } from "../context/BusinessDataContext"; 
 import { Link } from "react-router-dom";
-import axios from "axios";
+import API from "../utils/axiosConfig";
+import { useAuth } from "../context/AuthContext";
 
 function Products() {
-  const { products, addProduct, role } = useBusinessData();
+  const { products, addProduct } = useBusinessData();
+  const { user } = useAuth();
+  const role = user?.role;
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -25,7 +28,7 @@ const handleSubmit = async (event) => {
   event.preventDefault();
 
   try {
-const res = await API.post("http://localhost:5000/api/products", {
+const res = await API.post("/products", {
   name: formData.name.trim(),
   price: Number(formData.price),
   stock: Number(formData.stock),
@@ -126,7 +129,7 @@ setFormData({
   />
 </label>
         </div>
-{(role === "Management" || role === "Supply Chain") && (
+{(role === "Management" || role === "Supply Chain" || role === "Admin") && (
         <button
           type="submit"
           className="rounded-full bg-emerald-400 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300"

@@ -2,20 +2,17 @@ import { useState, useEffect } from "react";
 import { BusinessDataContext } from "./BusinessDataContext";
 import API from "../utils/axiosConfig";
 
-const API_BASE_URL = "http://localhost:5000/api";
-
 export function BusinessDataProvider({ children }) {
   const [products, setProducts] = useState([]);
   const [sales, setSales] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [employees, setEmployees] = useState([]);
-  const [role, setRole] = useState("Management");
   const [purchases, setPurchases] = useState([]);
   const [invoices, setInvoices] = useState([]);
 
   const fetchProducts = async () => {
     try {
-      const response = await API.get(`${API_BASE_URL}/products`);
+      const response = await API.get("/products");
       // Map _id to id for frontend compatibility
       const mappedProducts = response.data.map((product) => ({
         ...product,
@@ -32,7 +29,12 @@ export function BusinessDataProvider({ children }) {
   const fetchSales = async () => {
     try {
       const res = await API.get("/sales");
-      setSales(res.data);
+      const normalized = res.data.map((s) => ({
+        ...s,
+        finalAmount: s.finalAmount ?? s.totalPrice ?? 0,
+        totalPrice: s.totalPrice ?? s.finalAmount ?? 0,
+      }));
+      setSales(normalized);
     } catch (err) {
       console.error("Error fetching sales", err);
     }
@@ -187,7 +189,10 @@ useEffect(() => {
 
   const totalProducts = products.length;
   const totalSales = sales.length;
-  const totalRevenue = sales.reduce((sum, sale) => sum + (sale.totalPrice || 0), 0);
+  const totalRevenue = sales.reduce(
+    (sum, sale) => sum + Number(sale.finalAmount ?? sale.totalPrice ?? 0),
+    0
+  );
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
   const profit = totalRevenue - totalExpenses;
   const lowStockProducts = products.filter((p) => p.stock < 5);
@@ -235,9 +240,12 @@ useEffect(() => {
 
 const createInvoice = async (sale) => {
   try {
-   const subtotal = sale.totalPrice; 
-  const gst = subtotal * 0.18;
-  const finalAmount = subtotal + gst;
+   const subtotal = Number(sale.totalPrice ?? 0);
+   const discountPercent = Number(sale.discount ?? 0);
+   const discountAmount = subtotal * (discountPercent / 100);
+   const taxable = subtotal - discountAmount;
+   const gst = taxable * 0.18;
+   const finalAmount = taxable + gst;
     const invoiceData = {
   saleId: sale._id,
   companyName: sale.companyName,
@@ -247,6 +255,8 @@ const createInvoice = async (sale) => {
   totalPrice: sale.totalPrice,
 
   subtotal,
+  discountPercent,
+  discountAmount,
   gst,
   finalAmount,
 
@@ -347,8 +357,6 @@ const deleteEmployee = async (id) => {
         setEmployees,
         addEmployee,
         deleteEmployee,
-        role,
-        setRole,
         purchases,
         createPurchase,
       }}

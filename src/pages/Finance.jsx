@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useBusinessData } from "../context/BusinessDataContext";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import {
   PieChart,
   Pie,
@@ -27,8 +28,9 @@ function Finance() {
     totalRevenue,
     totalExpenses,
     profit,
-    role,
   } = useBusinessData();
+  const { user } = useAuth();
+  const role = user?.role;
 
   const [form, setForm] = useState({
     title: "",
@@ -155,7 +157,7 @@ const financeComparisonData = [
   return (
     <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
 
- {(role === "Finance" || role === "Management") && (
+ {(role === "Finance" || role === "Management" || role === "Admin") && (
 
       <form onSubmit={handleSubmit} className="space-y-4 bg-white/5 p-6 rounded-3xl border border-white/10">
         <h2 className="text-2xl text-white">Add Expense</h2>

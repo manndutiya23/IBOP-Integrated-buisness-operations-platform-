@@ -1,13 +1,15 @@
 import { useBusinessData } from "../context/BusinessDataContext";
-import axios from "axios";
+import API from "../utils/axiosConfig";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const Expenses = () => {
    const {
     expenses,
     deleteExpense,
-    role,
   } = useBusinessData();
+  const { user } = useAuth();
+  const role = user?.role;
   return (
    
       <div className="bg-slate-900/80 p-6 rounded-3xl border border-white/10">

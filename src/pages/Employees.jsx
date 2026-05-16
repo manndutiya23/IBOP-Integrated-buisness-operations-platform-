@@ -1,7 +1,10 @@
 import { useBusinessData } from "../context/BusinessDataContext";
+import { useAuth } from "../context/AuthContext";
 
 const Employees = () => {
-  const { employees, deleteEmployee, role } = useBusinessData();
+  const { employees, deleteEmployee } = useBusinessData();
+  const { user } = useAuth();
+  const role = user?.role;
 
   return (
       <div className="bg-slate-900/80 p-6 rounded-3xl border border-white/10">

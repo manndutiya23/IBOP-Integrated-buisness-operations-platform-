@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBusinessData } from "../context/BusinessDataContext";
-import axios from "axios";
+import API from "../utils/axiosConfig";
+import { useAuth } from "../context/AuthContext";
 
 function CreateSale() {
   const navigate = useNavigate();
-  const { products, createSale, role } = useBusinessData();
+  const { products, createSale } = useBusinessData();
+  const { user } = useAuth();
+  const role = user?.role;
   const [formData, setFormData] = useState({
     companyName: "",
     productId: products[0]?._id ?? products[0]?.id ?? "",
@@ -67,7 +70,7 @@ const handleSubmit = async (event) => {
   console.log("SENDING:", payload);
 
   try {
-    await API.post("http://localhost:5000/api/sales", payload);
+    await API.post("/sales", payload);
     navigate("/sales");
   } catch (err) {
     console.error("ERROR:", err.response?.data || err.message);
@@ -77,7 +80,7 @@ const handleSubmit = async (event) => {
 
   return (
     <section className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-      {(role === "Sales" || role === "Management") && (
+      {(role === "Sales" || role === "Management" || role === "Admin") && (
       <form
         onSubmit={handleSubmit}
         className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/20"
