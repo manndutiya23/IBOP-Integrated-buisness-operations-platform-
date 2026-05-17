@@ -40,20 +40,6 @@ app.use("/api/invoices", invoiceRoutes);
 app.use("/api/purchases", purchaseRoutes);
 app.use("/api/employees", employeeRoutes);
 
-console.log("REGISTERED ROUTES:");
-
-app._router.stack.forEach((middleware) => {
-  if (middleware.route) {
-    console.log(middleware.route.path);
-  } else if (middleware.name === "router") {
-    middleware.handle.stack.forEach((handler) => {
-      if (handler.route) {
-        console.log(handler.route.path);
-      }
-    });
-  }
-});
-
 
 app.get("/", (req, res) => {
   res.send("API is running...");
