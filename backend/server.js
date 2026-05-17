@@ -53,6 +53,19 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
+// Catch-all for any unmatched routes
+app.use((req, res) => {
+  console.log("❌ 404 - Path not found:", req.method, req.path);
+  console.log("   Full URL:", req.originalUrl);
+  console.log("   Headers:", req.headers);
+  res.status(404).json({ 
+    error: "Not Found",
+    path: req.path,
+    method: req.method,
+    message: "Route not found. Check server logs for details."
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
