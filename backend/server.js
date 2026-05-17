@@ -34,33 +34,20 @@ app.use(
 );
 app.use(express.json());
 
-// DEBUG: Log all registered routes
-console.log("=== ROUTE REGISTRATION START ===");
-app.use("/api/products", (req, res, next) => {
-  console.log("📍 /api/products hit:", req.method, req.path);
-  next();
-}, productRoutes);
-app.use("/api/expenses", (req, res, next) => {
-  console.log("📍 /api/expenses hit:", req.method, req.path);
-  next();
-}, expenseRoutes);
-app.use("/api/sales", (req, res, next) => {
-  console.log("📍 /api/sales hit:", req.method, req.path);
-  next();
-}, saleRoutes);
-app.use("/api/invoices", (req, res, next) => {
-  console.log("📍 /api/invoices hit:", req.method, req.path);
-  next();
-}, invoiceRoutes);
-app.use("/api/purchases", (req, res, next) => {
-  console.log("📍 /api/purchases hit:", req.method, req.path);
-  next();
-}, purchaseRoutes);
-app.use("/api/employees", (req, res, next) => {
-  console.log("📍 /api/employees hit:", req.method, req.path);
-  next();
-}, employeeRoutes);
-console.log("=== ROUTE REGISTRATION END ===");
+console.log("Mounting routes...");
+app.use("/api/products", productRoutes);
+console.log("✓ /api/products mounted");
+app.use("/api/expenses", expenseRoutes);
+console.log("✓ /api/expenses mounted");
+app.use("/api/sales", saleRoutes);
+console.log("✓ /api/sales mounted");
+app.use("/api/invoices", invoiceRoutes);
+console.log("✓ /api/invoices mounted");
+app.use("/api/purchases", purchaseRoutes);
+console.log("✓ /api/purchases mounted");
+app.use("/api/employees", employeeRoutes);
+console.log("✓ /api/employees mounted");
+console.log("All routes mounted successfully!");;
 
 app.get("/", (req, res) => {
   res.send("API is running...");
