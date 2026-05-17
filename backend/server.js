@@ -17,8 +17,8 @@ const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim()).filter(Boolean)
   : ["http://localhost:5173", "http://localhost:3000"];
 
-// connect database
-connectDB();
+// connect database - CRITICAL: Must await to ensure DB ready before routes process requests
+await connectDB();
 
 app.use(
   cors({
@@ -39,7 +39,6 @@ app.use("/api/sales", saleRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/purchases", purchaseRoutes);
 app.use("/api/employees", employeeRoutes);
-
 
 app.get("/", (req, res) => {
   res.send("API is running...");
