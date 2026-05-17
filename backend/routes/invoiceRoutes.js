@@ -34,7 +34,7 @@ router.get(
 router.patch(
   "/:id/status",
   protect,
-  authorizeRoles("Admin", "Finance", "Management"),
+  authorizeRoles("Admin", "Finance"),
   updateInvoiceStatus
 );
 

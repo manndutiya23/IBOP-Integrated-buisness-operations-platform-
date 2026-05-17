@@ -20,6 +20,7 @@ router.get(
   authorizeRoles(
     "Admin",
     "Supply Chain",
+    "Sales",
     "Management"
   ),
   getProducts
@@ -30,8 +31,7 @@ router.post(
   protect,
   authorizeRoles(
     "Admin",
-    "Supply Chain",
-    "Management"
+    "Supply Chain"
   ),
   createProduct
 );
@@ -41,8 +41,7 @@ router.put(
   protect,
   authorizeRoles(
     "Admin",
-    "Supply Chain",
-    "Management"
+    "Supply Chain"
   ),
   updateProduct
 );
@@ -50,7 +49,7 @@ router.put(
 router.delete(
   "/:id",
   protect,
-  authorizeRoles("Admin", "Supply Chain", "Management"),
+  authorizeRoles("Admin"),
   deleteProduct
 );
 

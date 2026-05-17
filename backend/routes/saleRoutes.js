@@ -38,7 +38,7 @@ router.get(
 router.delete(
   "/:id",
   protect,
-  authorizeRoles("Admin", "Sales", "Management"),
+  authorizeRoles("Admin"),
   deleteSale
 );
 

@@ -17,8 +17,7 @@ router.post(
   protect,
   authorizeRoles(
     "Admin",
-    "Supply Chain",
-    "Management"
+    "Supply Chain"
   ),
   createPurchase
 );
