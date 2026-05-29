@@ -1,8 +1,27 @@
 import axios from "axios";
 
+const normalizeApiBaseUrl = (value) => {
+  if (!value) {
+    return "http://localhost:5000/api";
+  }
+
+  try {
+    const url = new URL(value, window.location.origin);
+
+    if (url.hostname === "ibop-integrated-business-operations.onrender.com") {
+      url.hostname = "ibop-integrated-buisness-operations.onrender.com";
+    }
+
+    return url.toString().replace(/\/$/, "");
+  } catch {
+    return value;
+  }
+};
+
 const API = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  baseURL: normalizeApiBaseUrl(
+    import.meta.env.VITE_API_BASE_URL
+  ),
 });
 
 

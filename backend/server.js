@@ -17,6 +17,8 @@ const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim()).filter(Boolean)
   : ["http://localhost:5173", "http://localhost:3000"];
 
+console.log("CORS allowed origins:", allowedOrigins);
+
 // connect database - CRITICAL: Must await to ensure DB ready before routes process requests
 await connectDB();
 
