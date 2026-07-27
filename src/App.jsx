@@ -18,6 +18,7 @@ import Purchases from "./pages/Purchases";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
+import DesignSystem from "./pages/DesignSystem";
 
 function AppContent() {
 const { user, logout } = useAuth();
@@ -154,6 +155,7 @@ const navItems = [
             <Route path="/finance" element={<ProtectedRoute allowedRoles={["Finance", "Management", "Admin"]}><Finance /></ProtectedRoute>} />
             <Route path="/expenses" element={<ProtectedRoute allowedRoles={["Finance", "Management", "Admin"]}><Expenses /></ProtectedRoute>} />
             <Route path="/invoices" element={<ProtectedRoute allowedRoles={["Finance", "Management", "Admin"]}><Invoices /></ProtectedRoute>} />
+            <Route path="/design-system" element={<ProtectedRoute allowedRoles={["Management", "Admin"]}><DesignSystem /></ProtectedRoute>} />
             <Route path="/hr" element={<ProtectedRoute allowedRoles={["HR", "Admin"]}><HR /></ProtectedRoute>} />
             <Route path="/employees" element={<ProtectedRoute allowedRoles={["HR", "Admin"]}><Employees /></ProtectedRoute>} />
             <Route path="*" element={<Navigate to="/" replace />} />
