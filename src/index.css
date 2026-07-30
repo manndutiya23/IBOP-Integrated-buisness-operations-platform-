@@ -7,10 +7,32 @@
 :root {
   --blue-rgb: 237 245 255;
   --green-rgb: 125 161 35;
+  /* IBOP brand tokens */
+  --ibop-brand-burgundy: #7A1F3D;
+  --ibop-brand-maroon: #8A1538;
+  --ibop-brand-navy: #13243A;
+  --ibop-surface-primary: #ffffff;
+  --ibop-surface-secondary: #F8F9FB;
+  --ibop-surface-hover: #F1F3F6;
+  --ibop-border: #E6E9EE;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #7A8799;
+  --ibop-background: #F6F7F9; /* soft off-white */
 }
 
 body {
   font-family: "Work Sans", sans-serif;
+  background-color: var(--ibop-background);
+  /* left maroon band + soft main surface + subtle navy highlight */
+  background-image: 
+    radial-gradient(800px 400px at 8% 12%, rgba(138,21,56,0.06), transparent 18%),
+    radial-gradient(700px 350px at 92% 88%, rgba(19,36,58,0.04), transparent 20%),
+    radial-gradient(400px 200px at 50% 0%, rgba(255,255,255,0.6), transparent 35%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color-scheme: light;
+  color: var(--text-primary);
 }
 
 body:has(.card[data-color="blue"]:hover) {
@@ -180,4 +202,30 @@ body:has(.card[data-color="green"]:hover) {
   border: #fff;
   box-shadow: 0.6vmin 0.6vmin #fff, 1vmin 1vmin #d2e4ff, 1vmin 1vmin #d2e4ff,
     0.65vmin 1vmin #d2e4ff, 1vmin 0.65vmin #d2e4ff;
+}
+
+/* IBOP surface utilities */
+.ibop-header {
+  background: linear-gradient(180deg, rgba(138,21,56,0.96), rgba(19,36,58,0.88));
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.ibop-surface-dark {
+  background-color: var(--ibop-brand-maroon);
+  color: #fff;
+}
+
+.ibop-card-dark {
+  background-color: rgba(19,36,58,0.78);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #fff;
+  backdrop-filter: blur(8px);
+}
+
+/* Sidebar uses same brand chrome as header, full height */
+.ibop-sidebar {
+  background: linear-gradient(180deg, rgba(138,21,56,0.96), rgba(19,36,58,0.88));
+  color: #fff;
+  background-size: cover;
+  box-shadow: 10px 0 48px rgba(19,36,58,0.14);
 }

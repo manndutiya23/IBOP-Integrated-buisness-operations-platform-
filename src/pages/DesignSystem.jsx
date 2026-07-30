@@ -1,4 +1,5 @@
 import "./DesignSystem.css";
+import KPICard from "../components/Ui/KPICard/KPICard";
 
 const typographySamples = [
 	{
@@ -30,11 +31,141 @@ const buttonSamples = [
 ];
 
 const kpiCards = [
-	{ label: "Monthly Revenue", value: "KES 4.82M", delta: "+12.4%", tone: "positive", footnote: "Compared with last month" },
-	{ label: "Open Purchase Orders", value: "28", delta: "-5.1%", tone: "neutral", footnote: "Awaiting supplier confirmation" },
-	{ label: "Stockout Risk", value: "7 SKUs", delta: "+2 alerts", tone: "warning", footnote: "Items below reorder point" },
-	{ label: "Overdue Invoices", value: "11", delta: "-3 paid", tone: "negative", footnote: "Needs finance follow-up" },
+	{
+		title: "Monthly Revenue",
+		value: "KES 4.82M",
+		trend: "+12.4%",
+		trendDirection: "up",
+		status: "Closed",
+		accent: "brand",
+		subtitle: "Compared with the previous billing cycle across all branches.",
+		lastUpdated: "Updated 12 min ago",
+		icon: <RevenueIcon />,
+		onClick: () => {},
+	},
+	{
+		title: "Open Purchase Orders",
+		value: "28",
+		trend: "5 ready for follow-up",
+		trendDirection: "flat",
+		status: "Pending",
+		accent: "blue",
+		subtitle: "Pharmacy and lab supply orders awaiting supplier confirmation.",
+		lastUpdated: "Updated 18 min ago",
+		icon: <PurchaseOrderIcon />,
+	},
+	{
+		title: "Inventory Value",
+		value: "KES 18.4M",
+		trend: "+3.1%",
+		trendDirection: "up",
+		status: "Healthy",
+		accent: "green",
+		subtitle: "Combined stock value across warehouse and branch inventory.",
+		lastUpdated: "Updated 6 min ago",
+		icon: <InventoryIcon />,
+	},
+	{
+		title: "Pending Payments",
+		value: "KES 2.1M",
+		trend: "-8.6%",
+		trendDirection: "down",
+		status: "Attention",
+		accent: "orange",
+		subtitle: "Receivables aging beyond 14 days across retail accounts.",
+		lastUpdated: "Updated 9 min ago",
+		icon: <PaymentsIcon />,
+	},
+	{
+		title: "Low Stock Items",
+		value: "7 SKUs",
+		trend: "3 added this morning",
+		trendDirection: "flat",
+		status: "Warning",
+		accent: "red",
+		subtitle: "Medicines and consumables nearing reorder thresholds.",
+		lastUpdated: "Updated 4 min ago",
+		icon: <LowStockIcon />,
+	},
+	{
+		title: "Employees",
+		value: "142",
+		trend: null,
+		trendDirection: null,
+		status: "Loading",
+		accent: "neutral",
+		loading: true,
+		subtitle: "HR headcount and active roster will populate from the employee service.",
+		lastUpdated: null,
+		icon: <EmployeeIcon />,
+	},
 ];
+
+function RevenueIcon() {
+	return (
+		<svg viewBox="0 0 24 24" aria-hidden="true">
+			<path d="M4 17V7" />
+			<path d="M8 17V11" />
+			<path d="M12 17V5" />
+			<path d="M16 17V9" />
+			<path d="M20 17V13" />
+			<path d="M4 17h16" />
+		</svg>
+	);
+}
+
+function PurchaseOrderIcon() {
+	return (
+		<svg viewBox="0 0 24 24" aria-hidden="true">
+			<path d="M7 7h10" />
+			<path d="M7 12h10" />
+			<path d="M7 17h6" />
+			<path d="M6 4.5h12a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5.5a1 1 0 0 1 1-1Z" />
+		</svg>
+	);
+}
+
+function InventoryIcon() {
+	return (
+		<svg viewBox="0 0 24 24" aria-hidden="true">
+			<path d="m4 8 8-4 8 4-8 4-8-4Z" />
+			<path d="M4 8v8l8 4 8-4V8" />
+			<path d="m12 12v8" />
+		</svg>
+	);
+}
+
+function PaymentsIcon() {
+	return (
+		<svg viewBox="0 0 24 24" aria-hidden="true">
+			<path d="M7 7h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z" />
+			<path d="M5 10h14" />
+			<path d="M8 15h3" />
+		</svg>
+	);
+}
+
+function LowStockIcon() {
+	return (
+		<svg viewBox="0 0 24 24" aria-hidden="true">
+			<path d="M4 18h16" />
+			<path d="M6 18V9" />
+			<path d="M10 18V6" />
+			<path d="M14 18v-4" />
+			<path d="M18 18V8" />
+			<path d="M6 9h12" />
+		</svg>
+	);
+}
+
+function EmployeeIcon() {
+	return (
+		<svg viewBox="0 0 24 24" aria-hidden="true">
+			<path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" />
+			<path d="M5 20a7 7 0 0 1 14 0" />
+		</svg>
+	);
+}
 
 const modules = [
 	{
@@ -175,16 +306,22 @@ function DesignSystem() {
 					))}
 				</DesignSection>
 
-				<DesignSection title="KPI Cards" description="Snapshot metrics that help managers scan performance quickly.">
+				<DesignSection title="KPI Cards" description="Six real pharmaceutical ERP states shown as a component gallery.">
 					{kpiCards.map((card) => (
-						<SectionCard key={card.label} className="design-system-kpi-card">
-							<p className="design-system-card__label">{card.label}</p>
-							<div className="design-system-kpi-card__value-row">
-								<h3 className="design-system-kpi-card__value">{card.value}</h3>
-								<span className={`design-system-trend design-system-trend--${card.tone}`}>{card.delta}</span>
-							</div>
-							<p className="design-system-card__note">{card.footnote}</p>
-						</SectionCard>
+						<KPICard
+							key={card.title}
+							title={card.title}
+							value={card.value}
+							trend={card.trend}
+							trendDirection={card.trendDirection}
+							status={card.status}
+							accent={card.accent}
+							loading={card.loading}
+							onClick={card.onClick}
+							subtitle={card.subtitle}
+							lastUpdated={card.lastUpdated}
+							icon={card.icon}
+						/>
 					))}
 				</DesignSection>
 

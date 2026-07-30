@@ -51,7 +51,7 @@ function Login() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4 py-8 sm:px-6 lg:px-8 -mt-8">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden ibop-surface-dark px-4 py-8 sm:px-6 lg:px-8 -mt-8">
   <div className="pointer-events-none absolute inset-0 overflow-hidden">
 
   <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/10 blur-3xl" />
@@ -62,7 +62,7 @@ function Login() {
 
 </div>
 
-      <div className="relative w-full max-w-md rounded-3xl border border-white/10 bg-slate-900/70 p-8 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-10">
+      <div className="relative w-full max-w-md rounded-3xl border border-white/10 ibop-card-dark p-8 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-10">
         <div className="mb-8">
           <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-400/30 bg-emerald-400/10 text-sm font-bold tracking-wider text-emerald-300">
             IB

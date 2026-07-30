@@ -9,7 +9,7 @@ function ProtectedRoute({
   const { user, loading } = useAuth();
   // while loading
   if (loading) {
-    return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">Loading...</div>;
+    return <div className="flex min-h-screen items-center justify-center ibop-surface-dark text-white">Loading...</div>;
   }
   // not logged in
   if (!user) {
@@ -26,7 +26,7 @@ function ProtectedRoute({
     !allowedRoles.includes(user.role)
   ) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
+      <div className="flex min-h-screen items-center justify-center ibop-surface-dark text-white">
         Access Denied
       </div>
     );
