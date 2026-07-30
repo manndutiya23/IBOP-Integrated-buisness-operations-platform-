@@ -45,7 +45,7 @@ function Dashboard() {
 
   {/* LEFT SIDE - MODULES */}
  <DashboardTables />
-
+<DashboardActivity />
  {/* RIGHT SIDE - ANALYTICS */}
 <DashboardAnalytics />
 
