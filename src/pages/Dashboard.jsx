@@ -1,18 +1,15 @@
 import { Link } from "react-router-dom";
-import DashboardHeader from "../components/dashboard/DashboardHeader";
-import DashboardKPIs from "../components/dashboard/DashboardKPIs";
+import {
+    DashboardHeader,
+    DashboardKPIs,
+    DashboardTables,
+    DashboardAnalytics,
+    DashboardActivity,
+    DashboardNotifications,
+} from "../components/dashboard";
 import { useBusinessData } from "../context/BusinessDataContext";
 import { useAuth } from "../context/AuthContext";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from "recharts";
+
 
 function Dashboard() {
   const {
@@ -32,28 +29,7 @@ function Dashboard() {
     { name: "HR", path: "/hr-module", roles: ["HR", "Admin"], description: "Manage human resources" },
   ];
 
-  const monthlyDataMap = {};
-
-sales.forEach((sale) => {
-  const date = new Date(sale.date);
-
-  const month = date.toLocaleString("default", {
-    month: "short",
-  });
-
-  if (!monthlyDataMap[month]) {
-    monthlyDataMap[month] = {
-      month,
-      revenue: 0,
-      sales: 0,
-    };
-  }
-
-  monthlyDataMap[month].revenue += sale.finalAmount || 0;
-  monthlyDataMap[month].sales += 1;
-});
-
-const chartData = Object.values(monthlyDataMap);
+  
 
   return (
     <div className="ibop-page">
@@ -93,106 +69,7 @@ const chartData = Object.values(monthlyDataMap);
   </div>
 
  {/* RIGHT SIDE - ANALYTICS */}
-<div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6">
-
-  <div className="flex items-center justify-between mb-6">
-    <div>
-      <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
-        Analytics
-      </p>
-
-      <h3 className="text-2xl font-semibold text-white mt-2">
-        Revenue Trends
-      </h3>
-    </div>
-
-    <div className="text-right">
-      <p className="text-xs text-slate-400">
-        Total Revenue
-      </p>
-
-      <p className="text-xl font-bold text-emerald-300">
-        ₹{totalRevenue.toLocaleString()}
-      </p>
-    </div>
-  </div>
-
-  <div className="h-[260px]">
-
-    <ResponsiveContainer width="100%" height="100%">
-
-      <LineChart data={chartData}>
-
-        <CartesianGrid
-          strokeDasharray="3 3"
-          stroke="#1e293b"
-        />
-
-        <XAxis
-          dataKey="month"
-          stroke="#94a3b8"
-        />
-
-        <YAxis stroke="#94a3b8" />
-
-        <Tooltip />
-
-        <Legend />
-
-        <Line
-  type="monotone"
-  dataKey="revenue"
-  stroke="#34d399"
-  strokeWidth={4}
-  activeDot={{ r: 8 }}
-  dot={{ r: 4 }}
-/>
-
-      </LineChart>
-
-    </ResponsiveContainer>
-
-  </div>
-
-  {/* LOW STOCK QUICK PANEL */}
-  <div className="mt-6 border-t border-white/10 pt-4">
-
-    <div className="flex items-center justify-between">
-      <h4 className="text-sm font-semibold text-white">
-        Low Stock Products
-      </h4>
-
-      <span className="text-sm text-red-300">
-        {lowStockProducts.length} items
-      </span>
-    </div>
-
-    {lowStockProducts.length === 0 ? (
-      <p className="mt-2 text-sm text-slate-400">
-        Inventory levels are healthy.
-      </p>
-    ) : (
-      <div className="mt-3 space-y-2">
-        {lowStockProducts.slice(0, 3).map((product) => (
-          <div
-            key={product._id}
-            className="flex items-center justify-between rounded-xl bg-red-500/10 border border-red-500/20 px-3 py-2"
-          >
-            <span className="text-sm text-white">
-              {product.name}
-            </span>
-
-            <span className="text-sm font-semibold text-red-300">
-              {product.stock}
-            </span>
-          </div>
-        ))}
-      </div>
-    )}
-
-  </div>
-
-</div>
+<DashboardAnalytics />
 
       </div>
     </div>
