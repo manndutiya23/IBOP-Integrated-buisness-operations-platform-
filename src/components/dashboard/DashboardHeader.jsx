@@ -6,7 +6,7 @@ const DashboardHeader = ({ user }) => {
     month: "long",
     year: "numeric",
   });
-
+  
   return (
     <header className="dashboard-header">
 

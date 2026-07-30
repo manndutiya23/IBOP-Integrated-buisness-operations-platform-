@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import DashboardHeader from "../components/dashboard/DashboardHeader";
+import DashboardKPIs from "../components/dashboard/DashboardKPIs";
 import { useBusinessData } from "../context/BusinessDataContext";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -55,51 +57,14 @@ const chartData = Object.values(monthlyDataMap);
 
   return (
     <div className="ibop-page">
-<div className="ibop-page-header">
-
-    <p className="ibop-eyebrow">
-        Dashboard
-    </p>
-
-    <h1 className="ibop-title">
-        Good Morning, {user?.name || "Administrator"} 👋
-    </h1>
-
-    <p className="ibop-subtitle">
-        Here's what's happening across your business today.
-        Review revenue, inventory, procurement and workforce
-        activity from one centralized workspace.
-    </p>
-
-</div>
+<DashboardHeader user={user} />
       
-<div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4 mb-8">
-  
-  <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
-    <p className="text-sm text-slate-400">Total Products</p>
-    <h3 className="text-2xl font-semibold text-white">{totalProducts}</h3>
-  </div>
-
-  <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
-    <p className="text-sm text-slate-400">Total Sales</p>
-    <h3 className="text-2xl font-semibold text-white">{totalSales}</h3>
-  </div>
-
-  <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
-    <p className="text-sm text-slate-400">Total Revenue</p>
-    <h3 className="text-2xl font-semibold text-emerald-300">
-      ₹{totalRevenue.toFixed(2)}
-    </h3>
-  </div>
-
-  <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
-    <p className="text-sm text-slate-400">Low Stock Items</p>
-    <h3 className="text-2xl font-semibold text-red-300">
-      {lowStockProducts.length}
-    </h3>
-  </div>
-
-</div>
+<DashboardKPIs
+    totalProducts={totalProducts}
+    totalSales={totalSales}
+    totalRevenue={totalRevenue}
+    lowStockProducts={lowStockProducts}
+/>
       <div className="grid lg:grid-cols-3 gap-6 mt-6">
 
   {/* LEFT SIDE - MODULES */}
