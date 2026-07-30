@@ -5,7 +5,7 @@
 	--kpi-surface-1: #121826;
 	--kpi-surface-2: #1a2233;
 	--kpi-surface-hover: #232d42;
-	--kpi-border: #2a3547;
+	--kpi-border: #313f54;
 	--kpi-text: #f3f4f6;
 	--kpi-text-strong: #a5b4c7;
 	--kpi-text-muted: #7a8799;
@@ -16,13 +16,13 @@
 	--kpi-accent: var(--kpi-success);
 	--kpi-accent-soft: rgb(74 222 128 / 14%);
 	--kpi-accent-strong: rgb(74 222 128 / 24%);
-	--kpi-shadow: 0 12px 28px rgb(4 8 20 / 30%);
+	--kpi-shadow: 0 6px 16px rgb(5 10 20 / 12%);
 	position: relative;
 	flex: 1 1 280px;
 	min-width: 280px;
 	padding: 20px;
 	border: 1px solid var(--kpi-border);
-	border-radius: 18px;
+	border-radius: 12px;
 	background: linear-gradient(180deg, var(--kpi-surface-2) 0%, var(--kpi-surface-1) 100%);
 	box-shadow: var(--kpi-shadow);
 	overflow: hidden;
@@ -33,16 +33,19 @@
 	content: "";
 	position: absolute;
 	inset: 0 auto 0 0;
-	width: 2px;
-	background: linear-gradient(180deg, transparent 0%, var(--kpi-accent-strong) 18%, var(--kpi-accent) 100%);
+	width: 4px;
+	background: linear-gradient(
+180deg,
+#8A1538 0%,
+#B11F46 100%);
 	opacity: 0.85;
 }
 
 .kpi-card:hover {
-	transform: translateY(-2px);
+	transform: translateY(-1px);
 	border-color: color-mix(in srgb, var(--kpi-accent) 34%, var(--kpi-border));
 	background: linear-gradient(180deg, var(--kpi-surface-hover) 0%, var(--kpi-surface-1) 100%);
-	box-shadow: 0 16px 34px rgb(4 8 20 / 38%);
+	box-shadow: 0 10px 22px rgb(5 10 20 / 18%);
 }
 
 .kpi-card:focus-visible,
@@ -64,15 +67,7 @@
 	opacity: 0.92;
 }
 
-.kpi-card__surface {
-	position: absolute;
-	inset: 0;
-	pointer-events: none;
-	background:
-		radial-gradient(circle at top right, var(--kpi-accent-soft), transparent 34%),
-		linear-gradient(180deg, rgb(255 255 255 / 3.5%), transparent 24%);
-	opacity: 0.65;
-}
+
 
 .kpi-card__shell {
 	position: relative;
@@ -101,9 +96,9 @@
 	flex: 0 0 auto;
 	align-items: center;
 	justify-content: center;
-	width: 42px;
-	height: 42px;
-	border-radius: 13px;
+	width: 38px;
+	height: 38px;
+	border-radius: 10px;
 	border: 1px solid color-mix(in srgb, var(--kpi-accent) 24%, var(--kpi-border));
 	background: color-mix(in srgb, var(--kpi-accent) 10%, var(--kpi-surface-1));
 	color: var(--kpi-accent);
@@ -111,8 +106,8 @@
 }
 
 .kpi-card__icon svg {
-	width: 21px;
-	height: 21px;
+	width: 18px;
+	height: 18px;
 	stroke: currentColor;
 	fill: none;
 	stroke-width: 1.8;
@@ -142,9 +137,7 @@
 	line-height: 1.5;
 }
 
-.kpi-card__subtitle--header {
-	margin-top: -1px;
-}
+
 
 .kpi-card__status {
 	flex: 0 0 auto;
@@ -204,7 +197,7 @@
 	margin: 0;
 	color: var(--kpi-text);
 	font-family: "Poppins", sans-serif;
-	font-size: clamp(1.75rem, 2.8vw, 2.4rem);
+	font-size: clamp(2rem);
 	font-weight: 700;
 	letter-spacing: -0.04em;
 	line-height: 1.05;
@@ -401,8 +394,7 @@
 .kpi-card--accent-brand .kpi-card__surface {
 	opacity: 0.95;
 	background:
-		radial-gradient(circle at top right, rgb(138 21 56 / 34%), transparent 36%),
-		radial-gradient(circle at 12% 18%, rgb(122 31 61 / 18%), transparent 22%),
+
 		linear-gradient(180deg, rgb(255 255 255 / 4%), transparent 24%);
 }
 
@@ -421,11 +413,11 @@
 }
 
 .kpi-card--structured {
-	box-shadow: 0 12px 28px rgb(7 10 18 / 30%);
+	box-shadow: 0 4px 12px rgb(0 0 0 / 12%)
 }
 
 .kpi-card--classic {
-	box-shadow: 0 12px 28px rgb(7 10 18 / 30%);
+	box-shadow: 0 4px 12px rgb(0 0 0 / 12%)
 }
 
 .kpi-card--split {

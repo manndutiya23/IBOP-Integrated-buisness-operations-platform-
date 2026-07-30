@@ -54,14 +54,24 @@ sales.forEach((sale) => {
 const chartData = Object.values(monthlyDataMap);
 
   return (
-    <div>
-      <div className="mb-8 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950 p-8 shadow-2xl shadow-emerald-950/20">
-        <p className="text-sm uppercase tracking-[0.35em] text-emerald-300">Overview</p>
-        <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">IBOP dashboard</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
-          Jump into sales or inventory from one place. Everything runs in local React state for now.
-        </p>
-      </div>
+    <div className="ibop-page">
+<div className="ibop-page-header">
+
+    <p className="ibop-eyebrow">
+        Dashboard
+    </p>
+
+    <h1 className="ibop-title">
+        Good Morning, {user?.name || "Administrator"} 👋
+    </h1>
+
+    <p className="ibop-subtitle">
+        Here's what's happening across your business today.
+        Review revenue, inventory, procurement and workforce
+        activity from one centralized workspace.
+    </p>
+
+</div>
       
 <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4 mb-8">
   

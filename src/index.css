@@ -229,3 +229,173 @@ body:has(.card[data-color="green"]:hover) {
   background-size: cover;
   box-shadow: 10px 0 48px rgba(19,36,58,0.14);
 }
+
+/* ==========================================================
+   IBOP DESIGN SYSTEM v1.0
+   FOUNDATION LAYER
+========================================================== */
+
+:root{
+
+    /* Backgrounds */
+
+    --bg-main:#F4F6F9;
+    --bg-sidebar:#3B1023;
+    --bg-sidebar-hover:#5A1634;
+    --bg-sidebar-active:#8C1D40;
+
+    --surface:#FFFFFF;
+    --surface-alt:#FCFCFD;
+
+    /* Brand */
+
+    --brand:#8C1D40;
+    --brand-dark:#5D112A;
+
+    /* Text */
+
+    --text:#1E293B;
+    --text-light:#64748B;
+    --text-muted:#94A3B8;
+
+    /* Borders */
+
+    --border:#E5E7EB;
+    --border-dark:#D7DBE2;
+
+    /* Radius */
+
+    --radius-lg:22px;
+    --radius-md:16px;
+    --radius-sm:12px;
+
+    /* Shadows */
+
+    --shadow-sm:
+        0 2px 8px rgba(15,23,42,.04);
+
+    --shadow-md:
+        0 8px 28px rgba(15,23,42,.06);
+
+    --shadow-lg:
+        0 18px 48px rgba(15,23,42,.08);
+
+}
+
+/* ---------- PAGE ---------- */
+
+.ibop-page{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:28px;
+
+}
+
+/* ---------- PAGE HEADER ---------- */
+
+.ibop-page-header{
+
+    background:white;
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius-lg);
+
+    padding:32px;
+
+    box-shadow:var(--shadow-sm);
+
+}
+
+.ibop-eyebrow{
+
+    font-size:12px;
+
+    font-weight:700;
+
+    letter-spacing:.25em;
+
+    text-transform:uppercase;
+
+    color:var(--brand);
+
+}
+
+.ibop-title{
+
+    margin-top:8px;
+
+    font-size:38px;
+
+    font-weight:700;
+
+    color:var(--text);
+
+}
+
+.ibop-subtitle{
+
+    margin-top:12px;
+
+    max-width:720px;
+
+    color:var(--text-light);
+
+    line-height:1.7;
+
+}
+
+/* ---------- GRID ---------- */
+
+.ibop-grid{
+
+    display:grid;
+
+    gap:24px;
+
+}
+
+/* ---------- SECTION ---------- */
+
+.ibop-section{
+
+    background:white;
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius-lg);
+
+    box-shadow:var(--shadow-sm);
+
+    padding:24px;
+
+}
+
+/* ---------- CARD ---------- */
+
+.ibop-card{
+
+    background:white;
+
+    border:1px solid var(--border);
+
+    border-radius:12px;
+
+    box-shadow:var(--shadow-sm);
+
+    transition:.25s;
+
+}
+
+.ibop-card:hover{
+
+    transform:translateY(-3px);
+
+    border-color:#D4D8E0;
+
+    box-shadow:var(--shadow-md);
+
+}
