@@ -1,5 +1,7 @@
 import "./DesignSystem.css";
 import KPICard from "../components/Ui/KPICard/KPICard";
+import Input from "../components/Ui/Input/Input";
+import Select from "../components/Ui/Select/Select";
 
 const typographySamples = [
 	{
@@ -344,60 +346,76 @@ function DesignSystem() {
 					))}
 				</DesignSection>
 
-				<DesignSection title="Inputs" description="Field patterns for search, names, dates, and numeric entries.">
-					<SectionCard className="design-system-form-card">
-						<div className="design-system-form-grid">
-							<label className="design-system-field">
-								<span className="design-system-field__label">Search invoices</span>
-								<input className="design-system-input" type="text" defaultValue="INV-2026" />
-							</label>
-							<label className="design-system-field">
-								<span className="design-system-field__label">Supplier name</span>
-								<input className="design-system-input" type="text" defaultValue="Acme Supply Co." />
-							</label>
-							<label className="design-system-field">
-								<span className="design-system-field__label">Quantity</span>
-								<input className="design-system-input" type="number" defaultValue="24" />
-							</label>
-							<label className="design-system-field">
-								<span className="design-system-field__label">Requested date</span>
-								<input className="design-system-input" type="date" defaultValue="2026-07-27" />
-							</label>
-						</div>
-					</SectionCard>
-				</DesignSection>
+				<DesignSection
+    title="Inputs"
+    description="Field patterns for search, names, dates, and numeric entries."
+>
+    <SectionCard className="design-system-form-card">
+        <div className="design-system-form-grid">
 
-				<DesignSection title="Dropdowns" description="Selection controls for branches, periods, and workflow filters.">
-					<SectionCard className="design-system-form-card">
-						<div className="design-system-form-grid">
-							<label className="design-system-field">
-								<span className="design-system-field__label">Branch</span>
-								<select className="design-system-select" defaultValue="nairobi">
-									<option value="nairobi">Nairobi HQ</option>
-									<option value="mombasa">Mombasa Warehouse</option>
-									<option value="kisumu">Kisumu Outlet</option>
-								</select>
-							</label>
-							<label className="design-system-field">
-								<span className="design-system-field__label">Period</span>
-								<select className="design-system-select" defaultValue="q3">
-									<option value="today">Today</option>
-									<option value="q3">Q3 2026</option>
-									<option value="year">This Year</option>
-								</select>
-							</label>
-							<label className="design-system-field">
-								<span className="design-system-field__label">Approval status</span>
-								<select className="design-system-select" defaultValue="pending">
-									<option value="all">All statuses</option>
-									<option value="pending">Pending</option>
-									<option value="approved">Approved</option>
-									<option value="rejected">Rejected</option>
-								</select>
-							</label>
-						</div>
-					</SectionCard>
-				</DesignSection>
+            <Input
+                label="Search invoices"
+                placeholder="Search invoice..."
+                defaultValue="INV-2026"
+            />
+
+            <Input
+                label="Supplier Name"
+                defaultValue="Acme Supply Co."
+            />
+
+            <Input
+                label="Quantity"
+                type="number"
+                defaultValue={24}
+            />
+
+            <Input
+                label="Requested Date"
+                type="date"
+                defaultValue="2026-07-27"
+            />
+
+        </div>
+    </SectionCard>
+</DesignSection>
+				<DesignSection
+    title="Dropdowns"
+    description="Selection controls for branches, periods, and workflow filters."
+>
+    <SectionCard className="design-system-form-card">
+        <div className="design-system-form-grid">
+
+            <Select
+                label="Branch"
+                defaultValue="nairobi"
+            >
+                <option value="nairobi">Nairobi HQ</option>
+                <option value="mombasa">Mombasa Warehouse</option>
+                <option value="kisumu">Kisumu Outlet</option>
+            </Select>
+
+            <Select
+                label="Period"
+                defaultValue="q3"
+            >
+                <option value="today">Today</option>
+                <option value="q3">Q3 2026</option>
+                <option value="year">This Year</option>
+            </Select>
+
+            <Select
+                label="Approval Status"
+                defaultValue="pending"
+            >
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+            </Select>
+
+        </div>
+    </SectionCard>
+</DesignSection>
 
 				<DesignSection title="Tables" description="Structured records for sales, purchasing, and finance workflows.">
 					<SectionCard className="design-system-table-card">

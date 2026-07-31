@@ -48,6 +48,7 @@ function Dashboard() {
 <DashboardActivity />
  {/* RIGHT SIDE - ANALYTICS */}
 <DashboardAnalytics />
+<DashboardNotifications />
 
       </div>
     </div>
