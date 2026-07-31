@@ -2,6 +2,7 @@ import "./DesignSystem.css";
 import KPICard from "../components/Ui/KPICard/KPICard";
 import Input from "../components/Ui/Input/Input";
 import Select from "../components/Ui/Select/Select";
+import Card from "../components/Ui/Card/Card";
 
 const typographySamples = [
 	{
@@ -265,9 +266,7 @@ function DesignSection({ title, description, children }) {
 	);
 }
 
-function SectionCard({ children, className = "" }) {
-	return <div className={`design-system-card ${className}`.trim()}>{children}</div>;
-}
+
 
 function StatusChip({ label, className }) {
 	return <span className={`design-system-status ${className}`}>{label}</span>;
@@ -292,11 +291,11 @@ function DesignSystem() {
 					description="Core text styles used for headers, body copy, and dashboard messaging."
 				>
 					{typographySamples.map((sample) => (
-						<SectionCard key={sample.label} className="design-system-card--typography">
+						<Card key={sample.label} className="design-system-card--typography">
 							<p className="design-system-card__label">{sample.label}</p>
 							<h3 className={`design-system-type-sample ${sample.className}`}>{sample.value}</h3>
 							<p className="design-system-card__note">{sample.note}</p>
-						</SectionCard>
+						</Card>
 					))}
 				</DesignSection>
 
@@ -329,14 +328,14 @@ function DesignSystem() {
 
 				<DesignSection title="Module Cards" description="Entry points for major ERP workstreams and workflows.">
 					{modules.map((module) => (
-						<SectionCard key={module.title} className={`design-system-module-card design-system-module-card--${module.tone}`}>
+						<Card key={module.title} className={`design-system-module-card design-system-module-card--${module.tone}`}>
 							<div className="design-system-module-card__topline">
 								<p className="design-system-card__label">Module</p>
 								<span className="design-system-module-card__meta">{module.meta}</span>
 							</div>
 							<h3 className="design-system-module-card__title">{module.title}</h3>
 							<p className="design-system-module-card__description">{module.description}</p>
-						</SectionCard>
+						</Card>
 					))}
 				</DesignSection>
 
@@ -350,7 +349,7 @@ function DesignSystem() {
     title="Inputs"
     description="Field patterns for search, names, dates, and numeric entries."
 >
-    <SectionCard className="design-system-form-card">
+    <Card className="design-system-form-card">
         <div className="design-system-form-grid">
 
             <Input
@@ -377,13 +376,13 @@ function DesignSystem() {
             />
 
         </div>
-    </SectionCard>
+    </Card>
 </DesignSection>
 				<DesignSection
     title="Dropdowns"
     description="Selection controls for branches, periods, and workflow filters."
 >
-    <SectionCard className="design-system-form-card">
+    <Card className="design-system-form-card">
         <div className="design-system-form-grid">
 
             <Select
@@ -414,11 +413,11 @@ function DesignSystem() {
             </Select>
 
         </div>
-    </SectionCard>
+    </Card>
 </DesignSection>
 
 				<DesignSection title="Tables" description="Structured records for sales, purchasing, and finance workflows.">
-					<SectionCard className="design-system-table-card">
+					<Card className="design-system-table-card">
 						<div className="design-system-table-wrap">
 							<table className="design-system-table">
 								<thead>
@@ -458,11 +457,11 @@ function DesignSystem() {
 							<p className="design-system-card__label">Table preview</p>
 							<p className="design-system-card__note">Designed for dense ERP records with scan-friendly spacing.</p>
 						</div>
-					</SectionCard>
+					</Card>
 				</DesignSection>
 
 				<DesignSection title="Charts" description="Compact visual summaries used inside dashboards and module summaries.">
-					<SectionCard className="design-system-chart-card">
+					<Card className="design-system-chart-card">
 						<div className="design-system-chart-card__header">
 							<div>
 								<p className="design-system-card__label">Revenue trend</p>
@@ -478,8 +477,8 @@ function DesignSystem() {
 							<div className="design-system-bar-chart__bar design-system-bar-chart__bar--h-64" />
 							<div className="design-system-bar-chart__bar design-system-bar-chart__bar--h-96" />
 						</div>
-					</SectionCard>
-					<SectionCard className="design-system-chart-card design-system-chart-card--secondary">
+					</Card>
+					<Card className="design-system-chart-card design-system-chart-card--secondary">
 						<p className="design-system-card__label">Expense mix</p>
 						<div className="design-system-donut">
 							<div className="design-system-donut__ring" />
@@ -488,21 +487,21 @@ function DesignSystem() {
 								<span>Operational spend</span>
 							</div>
 						</div>
-					</SectionCard>
+					</Card>
 				</DesignSection>
 
 				<DesignSection title="Alerts" description="Feedback states for success, warning, information, and errors.">
 					{alertSamples.map((alert) => (
-						<SectionCard key={alert.title} className={`design-system-alert design-system-alert--${alert.tone}`}>
+						<Card key={alert.title} className={`design-system-alert design-system-alert--${alert.tone}`}>
 							<p className="design-system-alert__title">{alert.title}</p>
 							<p className="design-system-alert__description">{alert.description}</p>
-						</SectionCard>
+						</Card>
 					))}
 				</DesignSection>
 
 				<DesignSection title="Empty States" description="Encouraging messages for unpopulated data and search results.">
 					{emptyStates.map((state) => (
-						<SectionCard key={state.title} className="design-system-empty-state">
+						<Card key={state.title} className="design-system-empty-state">
 							<div className="design-system-empty-state__icon" aria-hidden="true">
 								⋯
 							</div>
@@ -511,12 +510,12 @@ function DesignSystem() {
 							<button type="button" className="design-system-button design-system-button--secondary">
 								{state.action}
 							</button>
-						</SectionCard>
+						</Card>
 					))}
 				</DesignSection>
 
 				<DesignSection title="Loading States" description="Skeletons and spinners for data that is still being fetched.">
-					<SectionCard className="design-system-loading-card">
+					<Card className="design-system-loading-card">
 						<div className="design-system-spinner" aria-hidden="true" />
 						<div className="design-system-skeleton-stack">
 							{loadingBlocks.map((block, index) => (
@@ -527,7 +526,7 @@ function DesignSystem() {
 								/>
 							))}
 						</div>
-					</SectionCard>
+					</Card>
 				</DesignSection>
 			</div>
 		</div>
