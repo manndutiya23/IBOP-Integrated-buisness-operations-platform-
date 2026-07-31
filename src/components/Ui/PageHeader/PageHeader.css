@@ -1,0 +1,77 @@
+.ibop-page-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:32px;
+
+    margin-bottom:32px;
+
+}
+
+.ibop-page-header__content{
+
+    flex:1;
+
+}
+
+.ibop-page-header__eyebrow{
+
+    margin:0;
+
+    color:var(--brand);
+
+    font-size:.78rem;
+
+    font-weight:700;
+
+    letter-spacing:.22em;
+
+    text-transform:uppercase;
+
+}
+
+.ibop-page-header__title{
+
+    margin:8px 0;
+
+    font-size:2.3rem;
+
+    font-weight:800;
+
+    color:var(--text);
+
+}
+
+.ibop-page-header__subtitle{
+
+    margin:0;
+
+    max-width:700px;
+
+    line-height:1.7;
+
+    color:var(--text-light);
+
+}
+
+.ibop-page-header__actions{
+
+    display:flex;
+
+    gap:12px;
+
+}
+
+@media(max-width:900px){
+
+.ibop-page-header{
+
+flex-direction:column;
+
+}
+
+}

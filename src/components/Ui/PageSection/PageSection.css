@@ -1,0 +1,77 @@
+.ibop-page-section{
+
+    background:white;
+
+    border:1px solid var(--border);
+
+    border-radius:18px;
+
+    box-shadow:var(--shadow-sm);
+
+    padding:28px;
+
+}
+
+.ibop-page-section__header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:24px;
+
+    margin-bottom:24px;
+
+}
+
+.ibop-page-section__title{
+
+    margin:0;
+
+    font-size:1.4rem;
+
+    font-weight:700;
+
+    color:var(--text);
+
+}
+
+.ibop-page-section__subtitle{
+
+    margin-top:8px;
+
+    color:var(--text-light);
+
+    line-height:1.7;
+
+}
+
+.ibop-page-section__actions{
+
+    display:flex;
+
+    gap:12px;
+
+}
+
+.ibop-page-section__body{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:24px;
+
+}
+
+@media(max-width:900px){
+
+.ibop-page-section__header{
+
+flex-direction:column;
+
+}
+
+}

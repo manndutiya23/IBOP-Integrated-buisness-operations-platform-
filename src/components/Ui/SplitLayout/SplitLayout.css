@@ -1,0 +1,53 @@
+.ibop-split-layout{
+
+    display:grid;
+
+    grid-template-columns:var(--left-width) var(--right-width);
+
+    gap:var(--split-gap);
+
+    align-items:start;
+
+}
+
+.ibop-split-layout__left{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:24px;
+
+}
+
+.ibop-split-layout__right{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:24px;
+
+}
+
+.ibop-split-layout--reverse{
+
+    direction:rtl;
+
+}
+
+.ibop-split-layout--reverse>*{
+
+    direction:ltr;
+
+}
+
+@media(max-width:1100px){
+
+.ibop-split-layout{
+
+grid-template-columns:1fr;
+
+}
+
+}
