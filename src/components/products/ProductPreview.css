@@ -1,0 +1,39 @@
+.product-preview{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.product-preview__list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:14px;
+
+}
+
+.product-preview__item h4{
+
+    margin:0;
+
+    font-size:1rem;
+
+    color:var(--text);
+
+}
+
+.product-preview__item p{
+
+    margin-top:6px;
+
+    color:var(--text-light);
+
+    font-size:.9rem;
+
+}
