@@ -3,6 +3,8 @@ import KPICard from "../components/Ui/KPICard/KPICard";
 import Input from "../components/Ui/Input/Input";
 import Select from "../components/Ui/Select/Select";
 import Card from "../components/Ui/Card/Card";
+import EmptyState from "../components/Ui/EmptyState/EmptyState";
+import LoadingSpinner from "../components/Ui/LoadingSpinner/LoadingSpinner";
 
 const typographySamples = [
 	{
@@ -501,22 +503,18 @@ function DesignSystem() {
 
 				<DesignSection title="Empty States" description="Encouraging messages for unpopulated data and search results.">
 					{emptyStates.map((state) => (
-						<Card key={state.title} className="design-system-empty-state">
-							<div className="design-system-empty-state__icon" aria-hidden="true">
-								⋯
-							</div>
-							<h3 className="design-system-empty-state__title">{state.title}</h3>
-							<p className="design-system-empty-state__description">{state.description}</p>
-							<button type="button" className="design-system-button design-system-button--secondary">
-								{state.action}
-							</button>
-						</Card>
+						<EmptyState
+							key={state.title}
+							title={state.title}
+							description={state.description}
+							actionLabel={state.action}
+							onAction={state.onAction}
+						/>
 					))}
 				</DesignSection>
 
 				<DesignSection title="Loading States" description="Skeletons and spinners for data that is still being fetched.">
-					<Card className="design-system-loading-card">
-						<div className="design-system-spinner" aria-hidden="true" />
+					<LoadingSpinner className="design-system-loading-card" >
 						<div className="design-system-skeleton-stack">
 							{loadingBlocks.map((block, index) => (
 								<div
@@ -526,7 +524,7 @@ function DesignSystem() {
 								/>
 							))}
 						</div>
-					</Card>
+					</LoadingSpinner>
 				</DesignSection>
 			</div>
 		</div>
