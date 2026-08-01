@@ -1,0 +1,77 @@
+.ibop-section-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:24px;
+
+    margin-bottom:24px;
+
+}
+
+.ibop-section-header__content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+}
+
+.ibop-section-header__title{
+
+    margin:0;
+
+    font-size:1.6rem;
+
+    font-weight:700;
+
+    color:var(--text-primary);
+
+}
+
+.ibop-section-header__subtitle{
+
+    margin:0;
+
+    font-size:.95rem;
+
+    color:var(--text-secondary);
+
+    line-height:1.6;
+
+}
+
+.ibop-section-header__actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+@media (max-width:768px){
+
+.ibop-section-header{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+}
+
+.ibop-section-header__actions{
+
+width:100%;
+
+justify-content:flex-start;
+
+}
+
+}

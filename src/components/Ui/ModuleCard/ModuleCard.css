@@ -1,0 +1,122 @@
+.ibop-module-card{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    gap:32px;
+
+    padding:28px;
+
+    min-height:220px;
+
+    border-radius:var(--radius-lg);
+
+    background:var(--surface-color);
+
+    border:1px solid var(--border-color);
+
+    text-decoration:none;
+
+    color:inherit;
+
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        border-color .18s ease;
+
+}
+
+.ibop-module-card:hover{
+
+    transform:translateY(-6px);
+
+    border-color:var(--primary-color);
+
+    box-shadow:var(--shadow-lg);
+
+}
+
+.ibop-module-card__content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.ibop-module-card__icon{
+
+    width:56px;
+
+    height:56px;
+
+    border-radius:50%;
+
+    background:rgba(37,99,235,.08);
+
+    color:var(--primary-color);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:1.5rem;
+
+}
+
+.ibop-module-card__eyebrow{
+
+    margin:0;
+
+    text-transform:uppercase;
+
+    letter-spacing:.18em;
+
+    font-size:.72rem;
+
+    color:var(--text-secondary);
+
+}
+
+.ibop-module-card__title{
+
+    margin:8px 0 12px;
+
+    font-size:1.5rem;
+
+    font-weight:700;
+
+    color:var(--text-primary);
+
+}
+
+.ibop-module-card__description{
+
+    margin:0;
+
+    color:var(--text-secondary);
+
+    line-height:1.7;
+
+}
+
+.ibop-module-card__footer{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    font-weight:600;
+
+    color:var(--primary-color);
+
+}

@@ -1,0 +1,103 @@
+.invoice-modal{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:999;
+
+}
+
+.invoice-modal__backdrop{
+
+    position:absolute;
+
+    inset:0;
+
+    background:rgba(0,0,0,.55);
+
+}
+
+.invoice-modal__card{
+
+    position:relative;
+
+    width:min(700px,92vw);
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:32px;
+
+    box-shadow:var(--shadow-lg);
+
+    z-index:2;
+
+}
+
+.invoice-modal__card h2{
+
+    margin-bottom:24px;
+
+}
+
+.invoice-modal__content{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:18px;
+
+}
+
+.invoice-modal__content div{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:12px;
+
+    padding-bottom:8px;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.invoice-modal__content span{
+
+    color:var(--text-light);
+
+}
+
+.invoice-modal__actions{
+
+    margin-top:32px;
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+
+}
+
+@media(max-width:768px){
+
+.invoice-modal__content{
+
+grid-template-columns:1fr;
+
+}
+
+}

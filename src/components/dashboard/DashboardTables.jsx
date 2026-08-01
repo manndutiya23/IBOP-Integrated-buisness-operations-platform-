@@ -25,7 +25,7 @@ const DashboardTables = () => {
     },
     {
       name: "Supply Chain",
-      path: "/supply-chain",
+      path: "/products",
       roles: ["Supply Chain", "Management", "Admin"],
       description: "Inventory, products and purchasing.",
       color: "supply",

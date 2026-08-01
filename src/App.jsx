@@ -9,7 +9,6 @@ import Finance from "./pages/Finance";
 
 import Expenses from "./pages/Expenses";
 import Employees from "./pages/Employees";
-import SupplyChain from "./pages/SupplyChain";
 import SalesModule from "./pages/SalesModule";
 import FinanceModule from "./pages/FinanceModule";
 import HRModule from "./pages/HRModule";
@@ -40,9 +39,9 @@ const { user, logout } = useAuth();
           <Route path="/sales-module" element={<ProtectedRoute allowedRoles={["Sales", "Management", "Admin"]}><SalesModule /></ProtectedRoute>} />
           <Route path="/sales" element={<ProtectedRoute allowedRoles={["Sales", "Management", "Admin"]}><Sales /></ProtectedRoute>} />
           <Route path="/sales/new" element={<ProtectedRoute allowedRoles={["Sales", "Management", "Admin"]}><CreateSale /></ProtectedRoute>} />
-          <Route path="/supply-chain" element={<ProtectedRoute allowedRoles={["Supply Chain", "Management", "Admin"]}><SupplyChain /></ProtectedRoute>} />
-          <Route path="/hr-module" element={<ProtectedRoute allowedRoles={["HR", "Admin"]}><HRModule /></ProtectedRoute>} />
           <Route path="/products" element={<ProtectedRoute allowedRoles={["Supply Chain", "Management", "Admin"]}><Products /></ProtectedRoute>} />
+          <Route path="/hr-module" element={<ProtectedRoute allowedRoles={["HR", "Admin"]}><HRModule /></ProtectedRoute>} />
+          
          
           <Route path="/purchases" element={<ProtectedRoute allowedRoles={["Supply Chain", "Management", "Admin"]}><Purchases /></ProtectedRoute>} />
           <Route path="/finance-module" element={<ProtectedRoute allowedRoles={["Finance", "Management", "Admin"]}><FinanceModule /></ProtectedRoute>} />

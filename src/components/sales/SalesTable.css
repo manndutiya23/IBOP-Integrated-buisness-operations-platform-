@@ -1,0 +1,23 @@
+.sales-table__actions{
+
+    display:flex;
+
+    gap:8px;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+}
+
+.sales-table__actions .ui-button{
+
+    min-width:90px;
+
+}
+
+.sales-table__actions .ui-button--danger{
+
+    margin-left:4px;
+
+}
