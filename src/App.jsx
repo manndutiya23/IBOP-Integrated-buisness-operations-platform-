@@ -6,7 +6,7 @@ import Products from "./pages/Products";
 import CreateSale from "./pages/CreateSale";
 import { BusinessDataProvider } from "./context/BusinessDataProvider";
 import Finance from "./pages/Finance";
-import ProductList from "./pages/ProductList";
+
 import Expenses from "./pages/Expenses";
 import Employees from "./pages/Employees";
 import SupplyChain from "./pages/SupplyChain";
@@ -43,7 +43,7 @@ const { user, logout } = useAuth();
           <Route path="/supply-chain" element={<ProtectedRoute allowedRoles={["Supply Chain", "Management", "Admin"]}><SupplyChain /></ProtectedRoute>} />
           <Route path="/hr-module" element={<ProtectedRoute allowedRoles={["HR", "Admin"]}><HRModule /></ProtectedRoute>} />
           <Route path="/products" element={<ProtectedRoute allowedRoles={["Supply Chain", "Management", "Admin"]}><Products /></ProtectedRoute>} />
-          <Route path="/products/list" element={<ProtectedRoute allowedRoles={["Supply Chain", "Management", "Admin"]}><ProductList /></ProtectedRoute>} />
+         
           <Route path="/purchases" element={<ProtectedRoute allowedRoles={["Supply Chain", "Management", "Admin"]}><Purchases /></ProtectedRoute>} />
           <Route path="/finance-module" element={<ProtectedRoute allowedRoles={["Finance", "Management", "Admin"]}><FinanceModule /></ProtectedRoute>} />
           <Route path="/finance" element={<ProtectedRoute allowedRoles={["Finance", "Management", "Admin"]}><Finance /></ProtectedRoute>} />

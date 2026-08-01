@@ -1,104 +1,320 @@
-import { DataTable, PageSection, StatusBadge } from "../Ui";
+import { useState } from "react";
+import { useBusinessData } from "../../context/BusinessDataContext";
+import {
+    Button,
+    DataTable,
+    PageSection,
+    StatusBadge,
+    Input,
+} from "../Ui";
+
 import "./ProductTable.css";
 
 function ProductTable({ products }) {
 
-    const columns = [
+    const {
 
-        {
-            header: "Product",
-            accessor: "name",
-        },
+        updateProduct,
+        deleteProduct,
 
-        {
-            header: "Price",
-            render: (product) => (
-                <>₹{Number(product.price).toLocaleString()}</>
-            ),
-        },
+    } = useBusinessData();
 
-        {
-            header: "Stock",
-            render: (product) => (
-                <>{product.stock} units</>
-            ),
-        },
+    const [editingId, setEditingId] = useState(null);
 
-        {
-            header: "Batch",
-            accessor: "batchNumber",
-        },
+    const [editData, setEditData] = useState({
 
-        {
-            header: "Expiry",
-            render: (product) => {
+        price: "",
 
-                if (!product.expiryDate)
-                    return "-";
+        stock: "",
 
-                return new Date(
-                    product.expiryDate
-                ).toLocaleDateString();
+    });
 
-            },
-        },
+    const startEditing = (product) => {
 
-        {
-            header: "Status",
-            render: (product) => {
+        setEditingId(product._id);
 
-                const stock = Number(product.stock);
+        setEditData({
 
-                if (stock === 0) {
+            price: product.price,
 
-                    return (
-                        <StatusBadge
-                            status="danger"
-                        >
-                            Out of Stock
-                        </StatusBadge>
-                    );
+            stock: product.stock,
 
-                }
+        });
 
-                if (stock <= 10) {
+    };
 
-                    return (
-                        <StatusBadge
-                            status="warning"
-                        >
-                            Low Stock
-                        </StatusBadge>
-                    );
+    const cancelEditing = () => {
 
-                }
+        setEditingId(null);
 
-                return (
-                    <StatusBadge
-                        status="success"
-                    >
-                        In Stock
-                    </StatusBadge>
-                );
+    };
 
-            },
-        },
+    const saveProduct = async (product) => {
 
-    ];
+        await updateProduct({
+
+            _id: product._id,
+
+            price: Number(editData.price),
+
+            stock: Number(editData.stock),
+
+        });
+
+        setEditingId(null);
+
+    };
+
+    const getStatus = (stock) => {
+
+        if (stock === 0) {
+
+            return {
+
+                variant: "danger",
+
+                label: "Out of Stock",
+
+            };
+
+        }
+
+        if (stock <= 10) {
+
+            return {
+
+                variant: "warning",
+
+                label: "Low Stock",
+
+            };
+
+        }
+
+        return {
+
+            variant: "success",
+
+            label: "In Stock",
+
+        };
+
+    };
 
     return (
 
         <PageSection
+
             title="Inventory"
+
             subtitle="Manage products currently available in stock."
+
         >
 
-            <DataTable
-                columns={columns}
-                rows={products}
-                emptyTitle="No products found"
-                emptyDescription="Products will appear here after they are registered."
-            />
+            <DataTable>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Product</th>
+
+                        <th>Price</th>
+
+                        <th>Stock</th>
+
+                        <th>Batch</th>
+
+                        <th>Expiry</th>
+
+                        <th>Status</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+                                        {products.length === 0 ? (
+
+                        <tr>
+
+                            <td
+                                colSpan="7"
+                                className="datatable__empty"
+                            >
+
+                                No products found.
+
+                            </td>
+
+                        </tr>
+
+                    ) : (
+
+                        products.map((product) => {
+
+                            const status = getStatus(
+                                Number(product.stock)
+                            );
+
+                            return (
+
+                                <tr
+                                    key={product._id}
+                                >
+
+                                    <td>
+
+                                        {product.name}
+
+                                    </td>
+
+                                    <td>
+
+                                        {editingId === product._id ? (
+
+                                            <Input
+                                                type="number"
+                                                value={editData.price}
+                                                onChange={(event) =>
+                                                    setEditData({
+                                                        ...editData,
+                                                        price:
+                                                            event.target.value,
+                                                    })
+                                                }
+                                            />
+
+                                        ) : (
+
+                                            <>₹{Number(product.price).toLocaleString()}</>
+
+                                        )}
+
+                                    </td>
+
+                                    <td>
+
+                                        {editingId === product._id ? (
+
+                                            <Input
+                                                type="number"
+                                                value={editData.stock}
+                                                onChange={(event) =>
+                                                    setEditData({
+                                                        ...editData,
+                                                        stock:
+                                                            event.target.value,
+                                                    })
+                                                }
+                                            />
+
+                                        ) : (
+
+                                            <>{product.stock}</>
+
+                                        )}
+
+                                    </td>
+
+                                    <td>
+
+                                        {product.batchNumber}
+
+                                    </td>
+
+                                    <td>
+
+                                        {new Date(
+                                            product.expiryDate
+                                        ).toLocaleDateString()}
+
+                                    </td>
+
+                                    <td>
+
+                                        <StatusBadge
+                                            variant={status.variant}
+                                        >
+
+                                            {status.label}
+
+                                        </StatusBadge>
+
+                                    </td>
+
+                                    <td>
+
+                                        {editingId === product._id ? (
+
+                                            <>
+
+                                                <Button
+                                                    size="sm"
+                                                    onClick={() =>
+                                                        saveProduct(product)
+                                                    }
+                                                >
+                                                    Save
+                                                </Button>
+
+                                                <Button
+                                                    size="sm"
+                                                    variant="secondary"
+                                                    onClick={
+                                                        cancelEditing
+                                                    }
+                                                >
+                                                    Cancel
+                                                </Button>
+
+                                            </>
+
+                                        ) : (
+
+                                            <>
+
+                                                <Button
+                                                    size="sm"
+                                                    variant="secondary"
+                                                    onClick={() =>
+                                                        startEditing(product)
+                                                    }
+                                                >
+                                                    Edit
+                                                </Button>
+
+                                                <Button
+                                                    size="sm"
+                                                    variant="danger"
+                                                    onClick={() =>
+                                                        deleteProduct(
+                                                            product._id
+                                                        )
+                                                    }
+                                                >
+                                                    Delete
+                                                </Button>
+
+                                            </>
+
+                                        )}
+
+                                    </td>
+
+                                </tr>
+
+                            );
+
+                        })
+
+                    )}
+
+                </tbody>
+
+            </DataTable>
 
         </PageSection>
 
