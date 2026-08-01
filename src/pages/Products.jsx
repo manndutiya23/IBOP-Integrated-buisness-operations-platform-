@@ -7,10 +7,10 @@ import {
     PageHeader,
     SplitLayout,
 } from "../components/Ui";
-
 import {
     ProductForm,
     ProductPreview,
+    ProductKPIs,
 } from "../components/products";
 
 function Products() {
@@ -70,17 +70,11 @@ setFormData({
             eyebrow="Inventory"
             title="Products"
             subtitle="Manage medicines, devices and consumables across your inventory."
-            actions={
-                (role === "Management" ||
-                    role === "Supply Chain" ||
-                    role === "Admin") && (
-                    <Button>
-                        Add Product
-                    </Button>
-                )
-            }
-        />
 
+        />
+<ProductKPIs
+    products={products}
+/>
         <SplitLayout
             left={
                 <ProductForm

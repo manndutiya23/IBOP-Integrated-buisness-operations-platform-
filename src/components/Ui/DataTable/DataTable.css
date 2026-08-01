@@ -1,0 +1,188 @@
+.datatable{
+
+    background:white;
+
+    border:1px solid var(--border);
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    box-shadow:var(--shadow-sm);
+
+}
+
+.datatable__table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.datatable thead{
+
+    background:#FAFBFC;
+
+}
+
+.datatable th{
+
+    padding:18px 22px;
+
+    text-align:left;
+
+    font-size:.82rem;
+
+    font-weight:700;
+
+    letter-spacing:.04em;
+
+    text-transform:uppercase;
+
+    color:var(--text-light);
+
+    border-bottom:1px solid var(--border);
+
+    white-space:nowrap;
+
+}
+
+.datatable td{
+
+    padding:18px 22px;
+
+    border-bottom:1px solid #F1F4F8;
+
+    color:var(--text);
+
+    font-size:.95rem;
+
+    vertical-align:middle;
+
+}
+
+.datatable tbody tr{
+
+    transition:
+        background .18s,
+        transform .18s;
+
+}
+
+.datatable tbody tr:hover{
+
+    background:#FAFBFD;
+
+}
+
+.datatable tbody tr:last-child td{
+
+    border-bottom:none;
+
+}
+
+.datatable tbody td:first-child{
+
+    font-weight:600;
+
+}
+
+.datatable td:has(.status-badge){
+
+    width:1%;
+
+    white-space:nowrap;
+
+}
+
+.datatable__table td:has(button){
+
+    white-space:nowrap;
+
+}
+
+.datatable__table td:has(.ui-button){
+
+    display:flex;
+
+    gap:10px;
+
+    align-items:center;
+
+}
+
+.datatable__empty{
+
+    padding:56px;
+
+}
+.datatable::-webkit-scrollbar{
+
+    height:10px;
+
+}
+
+.datatable::-webkit-scrollbar-thumb{
+
+    background:#D6DCE6;
+
+    border-radius:999px;
+
+}
+
+.datatable::-webkit-scrollbar-track{
+
+    background:transparent;
+
+}
+
+.datatable{
+
+    overflow-x:auto;
+
+}
+
+.datatable__table{
+
+    min-width:900px;
+
+}
+
+.datatable tbody tr{
+
+    animation:fadeRow .25s ease;
+
+}
+
+@keyframes fadeRow{
+
+from{
+
+opacity:0;
+
+transform:translateY(6px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:none;
+
+}
+
+}
+
+@media(max-width:900px){
+
+.datatable th,
+
+.datatable td{
+
+padding:14px 16px;
+
+}
+
+}

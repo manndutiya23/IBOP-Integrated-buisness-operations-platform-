@@ -251,7 +251,11 @@ body:has(.card[data-color="green"]:hover) {
 
     --brand:#8C1D40;
     --brand-dark:#5D112A;
+--brand-burgundy-700: #8C1D40;
+--brand-navy-900: #13243A;
 
+--surface-elevated: #FFFFFF;
+--border-subtle: #E5E7EB;
     /* Text */
 
     --text:#1E293B;
