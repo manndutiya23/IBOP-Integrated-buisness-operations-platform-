@@ -1,0 +1,81 @@
+.finance-toolbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:24px;
+
+    margin-bottom:24px;
+
+    flex-wrap:wrap;
+
+}
+
+.finance-toolbar__left{
+
+    display:flex;
+
+    gap:16px;
+
+    flex:1;
+
+    flex-wrap:wrap;
+
+}
+
+.finance-toolbar__left .ui-input{
+
+    min-width:300px;
+
+}
+
+.finance-toolbar__left .ibop-select-group{
+
+    min-width:220px;
+
+}
+
+.finance-toolbar__right{
+
+    display:flex;
+
+    gap:12px;
+
+}
+
+@media (max-width:900px){
+
+.finance-toolbar{
+
+align-items:flex-start;
+
+}
+
+.finance-toolbar__left{
+
+width:100%;
+
+}
+
+.finance-toolbar__left .ui-input,
+
+.finance-toolbar__left .ibop-select-group{
+
+width:100%;
+
+min-width:100%;
+
+}
+
+.finance-toolbar__right{
+
+width:100%;
+
+justify-content:flex-end;
+
+}
+
+}

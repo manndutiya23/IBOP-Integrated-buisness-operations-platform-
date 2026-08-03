@@ -1,0 +1,41 @@
+.expense-category{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:6px 12px;
+
+    border-radius:999px;
+
+    font-size:.82rem;
+
+    font-weight:600;
+
+}
+
+.expense-category--purchase{
+
+    background:#DBEAFE;
+
+    color:#1D4ED8;
+
+}
+
+.expense-category--salaries{
+
+    background:#F3E8FF;
+
+    color:#7E22CE;
+
+}
+
+.expense-category--other{
+
+    background:#F3F4F6;
+
+    color:#4B5563;
+
+}
