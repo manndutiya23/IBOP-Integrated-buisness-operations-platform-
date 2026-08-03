@@ -1,367 +1,578 @@
-import { useState } from "react";
-import { useBusinessData } from "../context/BusinessDataContext";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { useBusinessData } from "../context/BusinessDataContext";
 import { useAuth } from "../context/AuthContext";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
-} from "recharts";
+import "./Finance.css";
 
+import {
+    PageHeader,
+    PageSection,
+    SplitLayout,
+    Card,
+    SectionHeader,
+} from "../components/Ui";
+
+import {
+
+    FinanceKPIs,
+
+    ExpenseForm,
+
+    ExpenseTable,
+
+} from "../components/finance";
+
+import {
+
+    PieChart,
+
+    Pie,
+
+    Cell,
+
+    Tooltip,
+
+    ResponsiveContainer,
+
+    BarChart,
+
+    Bar,
+
+    XAxis,
+
+    YAxis,
+
+    CartesianGrid,
+
+    Legend,
+
+} from "recharts";
 
 function Finance() {
 
-  const {
-    expenses,
-    invoices,
-    purchases,
-    addExpense,
-    totalRevenue,
-    totalExpenses,
-    profit,
-  } = useBusinessData();
-  const { user } = useAuth();
-  const role = user?.role;
+    const {
 
-  const [form, setForm] = useState({
-    title: "",
-    amount: "",
-    category: "Other",
-    date: "",
-  });
-  const unpaidInvoices = invoices.filter(
-  (invoice) => invoice.status === "unpaid"
-);
+        expenses,
 
-const pendingPayments = unpaidInvoices.reduce(
-  (sum, invoice) => sum + (invoice.finalAmount || 0),
-  0
-);
+        invoices,
 
-const totalGSTCollected = invoices.reduce(
-  (sum, invoice) => sum + (invoice.gst || 0),
-  0
-);
+        purchases,
 
-const averageInvoiceValue =
-  invoices.length > 0
-    ? totalRevenue / invoices.length
-    : 0;
+        addExpense,
 
-const totalProcurementSpend = purchases.reduce(
-  (sum, purchase) => sum + (purchase.finalAmount || 0),
-  0
-);
+        totalRevenue,
 
-const totalPurchasesCount = purchases.length;
+        totalExpenses,
 
-const supplierTotals = {};
+        profit,
 
-purchases.forEach((purchase) => {
-  const supplier = purchase.supplierName || "Unknown";
+    } = useBusinessData();
 
-  if (!supplierTotals[supplier]) {
-    supplierTotals[supplier] = 0;
-  }
+    const { user } = useAuth();
 
-  supplierTotals[supplier] += purchase.finalAmount || 0;
-});
+    const role = user?.role;
 
-const topSupplier =
-  Object.entries(supplierTotals).sort(
-    (a, b) => b[1] - a[1]
-  )[0]?.[0] || "N/A";
+    const [form, setForm] = useState({
 
- const categoryTotals = {};
+        title: "",
 
-expenses.forEach((expense) => {
-  const category = expense.category || "Other";
+        amount: "",
 
-  if (!categoryTotals[category]) {
-    categoryTotals[category] = 0;
-  }
+        category: "Other",
 
-  categoryTotals[category] += expense.amount;
-});
+        date: "",
 
-const expenseCategoryData = Object.entries(categoryTotals).map(
-  ([name, value]) => ({
-    name,
-    value,
-  })
-);
-
-const COLORS = [
-  "#34d399", // emerald
-  "#facc15", // yellow
-  "#60a5fa", // blue
-  "#f87171", // red
-  "#a78bfa", // purple
-  "#fb923c", // orange
-];
-
-const financeComparisonData = [
-  {
-    name: "Finance",
-    Revenue: totalRevenue,
-    Expenses: totalExpenses,
-  },
-];
-
-
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  if (!form.title || !form.amount || !form.date) return;
-
-  try {
-    await addExpense({
-      title: form.title,
-      amount: Number(form.amount),
-      category: form.category,
-      date: form.date,
     });
 
-    alert("Expense added");
+    const unpaidInvoices = useMemo(
 
-    setForm({
-      title: "",
-      amount: "",
-      category: "Other",
-      date: "",
+        () =>
+
+            invoices.filter(
+
+                invoice =>
+
+                    invoice.status === "unpaid"
+
+            ),
+
+        [invoices]
+
+    );
+
+    const pendingPayments = useMemo(
+
+        () =>
+
+            unpaidInvoices.reduce(
+
+                (sum, invoice) =>
+
+                    sum +
+
+                    (invoice.finalAmount || 0),
+
+                0
+
+            ),
+
+        [unpaidInvoices]
+
+    );
+
+    const totalGSTCollected = useMemo(
+
+        () =>
+
+            invoices.reduce(
+
+                (sum, invoice) =>
+
+                    sum +
+
+                    (invoice.gst || 0),
+
+                0
+
+            ),
+
+        [invoices]
+
+    );
+
+    const averageInvoiceValue =
+
+        invoices.length
+
+            ? totalRevenue / invoices.length
+
+            : 0;
+
+    const totalProcurementSpend =
+
+        purchases.reduce(
+
+            (sum, purchase) =>
+
+                sum +
+
+                (purchase.finalAmount || 0),
+
+            0
+
+        );
+
+    const supplierTotals = {};
+
+    purchases.forEach(purchase => {
+
+        const supplier =
+
+            purchase.supplierName ||
+
+            "Unknown";
+
+        supplierTotals[supplier] =
+
+            (supplierTotals[supplier] || 0)
+
+            +
+
+            (purchase.finalAmount || 0);
+
     });
 
-  } catch (err) {
-    console.error(err);
-    alert("Failed to add expense");
-  }
-};
-  return (
-    <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+    const topSupplier =
 
- {(role === "Finance" || role === "Management" || role === "Admin") && (
+        Object.entries(
 
-      <form onSubmit={handleSubmit} className="space-y-4 bg-white/5 p-6 rounded-3xl border border-white/10">
-        <h2 className="text-2xl text-white">Add Expense</h2>
+            supplierTotals
 
-        <input name="title" value={form.title} onChange={handleChange} placeholder="Title" className="w-full p-3 bg-slate-900 rounded-xl" required />
+        )
 
-        <input name="amount" value={form.amount} onChange={handleChange} type="number" placeholder="Amount" className="w-full p-3 bg-slate-900 rounded-xl" required />
+            .sort(
 
-        <select name="category" value={form.category} onChange={handleChange} className="w-full p-3 bg-slate-900 rounded-xl">
-          <option>Salaries</option>
-          <option>Other</option>
-        </select>
+                (a, b) => b[1] - a[1]
 
-        <input name="date" value={form.date} onChange={handleChange} type="date" className="w-full p-3 bg-slate-900 rounded-xl" required />
+            )[0]?.[0]
 
-        <button type="submit" className="bg-emerald-400 px-5 py-2 rounded-full text-black">
-          Add Expense
-        </button>
-      </form>
- )}
+        ||
 
-      <div className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
-        <div className="flex items-center justify-between">
-          <h3 className="text-2xl text-white">Recent Expenses</h3>
-          <Link to="/expenses" className="text-emerald-300 transition hover:text-emerald-200">
-            View All Expenses →
-          </Link>
-        </div>
+        "N/A";
 
-        {expenses.length === 0 ? (
-          <p className="text-slate-400">No expenses yet</p>
-        ) : (
-          <div className="space-y-3">
-            {expenses.slice(0, 3).map((expense, index) => (
-              <div
-                key={expense._id ?? `${expense.title}-${index}`}
-                className="rounded-2xl border border-white/10 bg-slate-900/70 p-4"
-              >
-                <p className="text-white">{expense.title}</p>
-                <p className="text-sm text-slate-300">Amount: ₹{expense.amount}</p>
-                <p className="text-sm text-slate-300">Category: {expense.category}</p>
-                <p className="text-sm text-slate-300">Date: {expense.date}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+    const categoryTotals = {};
 
-      {/* ANALYTICS */}
-<div className="lg:col-span-2 grid grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+    expenses.forEach(expense => {
 
-  <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
-    <p className="text-slate-400 text-sm">Total Revenue</p>
-    <h3 className="text-2xl font-bold text-emerald-400">
-      ₹{totalRevenue.toLocaleString()}
-    </h3>
-  </div>
+        const category =
 
-  <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
-    <p className="text-slate-400 text-sm">Total Expenses</p>
-    <h3 className="text-2xl font-bold text-white">
-      ₹{totalExpenses.toLocaleString()}
-    </h3>
-  </div>
+            expense.category ||
 
-  <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
-    <p className="text-slate-400 text-sm">Profit</p>
+            "Other";
 
-    <h3
-      className={`text-2xl font-bold ${
-        profit >= 0
-          ? "text-emerald-400"
-          : "text-red-400"
-      }`}
-    >
-      ₹{profit.toLocaleString()}
-    </h3>
-  </div>
+        categoryTotals[category] =
 
-  <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
-    <p className="text-slate-400 text-sm">Pending Payments</p>
+            (categoryTotals[category] || 0)
 
-    <h3 className="text-2xl font-bold text-yellow-400">
-      ₹{pendingPayments.toLocaleString()}
-    </h3>
+            +
 
-    <p className="text-xs text-slate-500 mt-1">
-      {unpaidInvoices.length} unpaid invoices
-    </p>
-  </div>
+            expense.amount;
 
-  <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
-    <p className="text-slate-400 text-sm">GST Collected</p>
+    });
 
-    <h3 className="text-2xl font-bold text-cyan-400">
-      ₹{totalGSTCollected.toLocaleString()}
-    </h3>
-  </div>
+    const expenseCategoryData =
 
-  <div className="p-5 bg-white/5 rounded-2xl border border-white/10">
-    <p className="text-slate-400 text-sm">Avg Invoice Value</p>
+        Object.entries(categoryTotals)
 
-    <h3 className="text-2xl font-bold text-white">
-      ₹{averageInvoiceValue.toFixed(2)}
-    </h3>
-  </div>
-<div className="p-5 bg-white/5 rounded-2xl border border-white/10">
-  <p className="text-slate-400 text-sm">
-    Procurement Spend
-  </p>
+            .map(
 
-  <h3 className="text-2xl font-bold text-orange-400">
-    ₹{totalProcurementSpend.toLocaleString()}
-  </h3>
-</div>
+                ([name, value]) => ({
 
-<div className="p-5 bg-white/5 rounded-2xl border border-white/10">
-  <p className="text-slate-400 text-sm">
-    Top Supplier
-  </p>
+                    name,
 
-  <h3 className="text-xl font-bold text-white">
-    {topSupplier}
-  </h3>
+                    value,
 
-  <p className="text-xs text-slate-500 mt-1">
-    {totalPurchasesCount} purchases
-  </p>
-</div>
-</div>
+                })
 
-<div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6 mt-2">
+            );
 
-  {/* PIE CHART */}
-  <div className="bg-white/5 border border-white/10 rounded-3xl p-6">
-    <h3 className="text-xl text-white mb-4">
-      Expense Categories
-    </h3>
+    const financeComparisonData = [
 
-    <div className="h-[300px]">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
+        {
 
-          <Pie
-  data={expenseCategoryData}
-  dataKey="value"
-  nameKey="name"
-  outerRadius={100}
-  label={({ name, percent }) =>
-    `${name} ${(percent * 100).toFixed(0)}%`
-  }
+            name: "Finance",
+
+            Revenue: totalRevenue,
+
+            Expenses: totalExpenses,
+
+        },
+
+    ];
+
+    const COLORS = [
+
+        "#34d399",
+
+        "#facc15",
+
+        "#60a5fa",
+
+        "#f87171",
+
+        "#a78bfa",
+
+        "#fb923c",
+
+    ];
+
+    const handleChange = event => {
+
+        setForm({
+
+            ...form,
+
+            [event.target.name]:
+
+                event.target.value,
+
+        });
+
+    };
+
+    const handleSubmit = async event => {
+
+        event.preventDefault();
+
+        if (
+
+            !form.title ||
+
+            !form.amount ||
+
+            !form.date
+
+        )
+
+            return;
+
+        try {
+
+            await addExpense({
+
+                title: form.title,
+
+                amount: Number(
+
+                    form.amount
+
+                ),
+
+                category: form.category,
+
+                date: form.date,
+
+            });
+
+            setForm({
+
+                title: "",
+
+                amount: "",
+
+                category: "Other",
+
+                date: "",
+
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    };return (
+
+<>
+
+<PageHeader
+
+    eyebrow="Finance"
+
+    title="Finance Dashboard"
+
+    subtitle="Manage business finances, expenses and analytics."
+
+/>
+
+<FinanceKPIs
+
+    totalRevenue={totalRevenue}
+
+    totalExpenses={totalExpenses}
+
+    profit={profit}
+
+    pendingPayments={pendingPayments}
+
+    totalGSTCollected={totalGSTCollected}
+
+    averageInvoiceValue={averageInvoiceValue}
+
+    totalProcurementSpend={totalProcurementSpend}
+
+    topSupplier={topSupplier}
+
+/>
+
+<SplitLayout>
+
+{(role === "Finance" ||
+
+role === "Management" ||
+
+role === "Admin") ? (
+
+<ExpenseForm
+
+    form={form}
+
+    handleChange={handleChange}
+
+    handleSubmit={handleSubmit}
+
+/>
+
+) : (
+
+<Card>
+
+<SectionHeader
+
+    title="Finance"
+
+    subtitle="You don't have permission to add expenses."
+
+/>
+
+</Card>
+
+)}
+
+<Card>
+
+<SectionHeader
+
+    title="Recent Expenses"
+
+    subtitle="Latest expense entries."
+
+    actions={
+
+        <Link to="/expenses">
+
+            View All →
+
+        </Link>
+
+    }
+
+/>
+
+<ExpenseTable
+
+    expenses={expenses.slice(0,3)}
+
+    role={role}
+
+    onDelete={() => {}}
+
+/>
+
+</Card>
+
+</SplitLayout>
+
+
+
+<PageSection
+
+    title="Financial Analytics"
+
+    subtitle="Revenue, expenses and spending insights."
+
 >
-  {expenseCategoryData.map((entry, index) => (
-    <Cell
-      key={index}
-      fill={COLORS[index % COLORS.length]}
-    />
-  ))}
+
+<div className="finance-analytics-grid">
+
+<Card>
+
+<SectionHeader
+
+    title="Expense Categories"
+
+    subtitle="Distribution of expenses by category."
+
+/>
+
+<div className="finance-chart">
+
+<ResponsiveContainer width="100%" height="100%">
+
+<PieChart>
+
+<Pie
+
+data={expenseCategoryData}
+
+dataKey="value"
+
+nameKey="name"
+
+outerRadius={100}
+
+label={({ name, percent }) =>
+
+`${name} ${(percent*100).toFixed(0)}%`
+
+}
+
+>
+
+{expenseCategoryData.map((entry,index)=>(
+
+<Cell
+
+key={index}
+
+fill={COLORS[index % COLORS.length]}
+
+/>
+
+))}
+
 </Pie>
 
-          <Tooltip />
-          <legend />
+<Tooltip/>
 
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
-  </div>
+</PieChart>
 
-  {/* BAR CHART */}
-  <div className="bg-white/5 border border-white/10 rounded-3xl p-6">
-    <h3 className="text-xl text-white mb-4">
-      Revenue vs Expenses
-    </h3>
-
-    <div className="h-[300px]">
-      <ResponsiveContainer width="100%" height="100%">
-
-        <BarChart data={financeComparisonData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-
-          <XAxis dataKey="name" stroke="#aaa" />
-
-          <YAxis stroke="#aaa" />
-
-          <Tooltip />
-
-          <Legend />
-
-          <Bar
-            dataKey="Revenue"
-            fill="#34d399"
-            radius={[8, 8, 0, 0]}
-          />
-
-          <Bar
-            dataKey="Expenses"
-            fill="#f87171"
-            radius={[8, 8, 0, 0]}
-          />
-
-        </BarChart>
-
-      </ResponsiveContainer>
-    </div>
-  </div>
+</ResponsiveContainer>
 
 </div>
-    </section>
-  );
+
+</Card>
+
+<Card>
+
+<SectionHeader
+
+title="Revenue vs Expenses"
+
+subtitle="Financial comparison."
+
+/>
+
+<div className="finance-chart">
+
+<ResponsiveContainer width="100%" height="100%">
+
+<BarChart
+
+data={financeComparisonData}
+
+>
+
+<CartesianGrid
+
+strokeDasharray="3 3"
+
+/>
+
+<XAxis
+
+dataKey="name"
+
+/>
+
+<YAxis/>
+
+<Tooltip/>
+
+<Legend/>
+
+<Bar
+
+dataKey="Revenue"
+
+radius={[8,8,0,0]}
+
+/>
+
+<Bar
+
+dataKey="Expenses"
+
+radius={[8,8,0,0]}
+
+/>
+
+</BarChart>
+
+</ResponsiveContainer>
+
+</div>
+
+</Card>
+
+</div>
+
+</PageSection>
+</>
+
+);
+
 }
 
 export default Finance;
