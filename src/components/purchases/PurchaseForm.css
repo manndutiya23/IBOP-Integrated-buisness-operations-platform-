@@ -1,0 +1,28 @@
+.purchase-form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:28px;
+
+}
+
+.purchase-form__grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(260px,1fr));
+
+    gap:24px;
+
+}
+
+.purchase-form__actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+}

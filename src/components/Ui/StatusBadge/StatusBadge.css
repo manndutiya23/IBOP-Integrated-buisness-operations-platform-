@@ -115,3 +115,18 @@
     border-color:var(--border-color);
 
 }
+.ui-status-badge--clickable{
+
+    cursor:pointer;
+
+    transition:transform .18s ease;
+
+}
+
+.ui-status-badge--clickable:hover{
+
+    transform:translateY(-1px);
+
+    opacity:.9;
+
+}

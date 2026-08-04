@@ -12,7 +12,16 @@ function FinanceToolbar({
 
     setCategory,
 
-}) {
+    options = [],
+
+    searchPlaceholder = "Search...",
+
+    addButtonText = "+ Add Expense",
+
+    addButtonLink = "/finance",
+    showButton = true,
+
+})  {
 
     return (
 
@@ -22,7 +31,7 @@ function FinanceToolbar({
 
                 <Input
 
-                    placeholder="Search expenses..."
+                  
 
                     value={searchTerm}
 
@@ -32,58 +41,49 @@ function FinanceToolbar({
 
                 />
 
-                <Select
+  <Select
 
-                    value={category}
+    value={category}
 
-                    onChange={(event) =>
-                        setCategory(event.target.value)
-                    }
+    onChange={(event) =>
+        setCategory(event.target.value)
+    }
 
-                >
+>
 
-                    <option value="All">
+    {options.map(option => (
 
-                        All Categories
+        <option
+            key={option}
+            value={option}
+        >
 
-                    </option>
+            {option}
 
-                    <option value="Purchase">
+        </option>
 
-                        Purchase
+    ))}
 
-                    </option>
-
-                    <option value="Salaries">
-
-                        Salaries
-
-                    </option>
-
-                    <option value="Other">
-
-                        Other
-
-                    </option>
-
-                </Select>
-
+</Select>
             </div>
 
-            <div className="finance-toolbar__right">
+            {showButton && (
 
-                <Link to="/finance">
+<div className="finance-toolbar__right">
 
-                    <Button>
+    <Link to={addButtonLink}>
 
-                        + Add Expense
+        <Button>
 
-                    </Button>
+            {addButtonText}
 
-                </Link>
+        </Button>
 
-            </div>
+    </Link>
 
+</div>
+
+)}
         </div>
 
     );

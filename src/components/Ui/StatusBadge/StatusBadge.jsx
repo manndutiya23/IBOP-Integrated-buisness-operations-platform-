@@ -2,24 +2,55 @@ import "./StatusBadge.css";
 
 function StatusBadge({
 
-    children,
+    status,
 
-    variant = "default",
+    variant,
 
     size = "md",
 
+    children,
+
+    onClick,
+
 }) {
+
+    const normalizedStatus =
+
+        status?.toLowerCase();
+
+    const badgeVariant =
+
+        variant ||
+
+        (normalizedStatus === "paid"
+
+            ? "success"
+
+            : normalizedStatus === "unpaid"
+
+            ? "warning"
+
+            : normalizedStatus === "overdue"
+
+            ? "danger"
+
+            : "default");
 
     return (
 
         <span
-            className={`
-                ui-status-badge
-                ui-status-badge--${variant}
-                ui-status-badge--${size}
-            `}
+ onClick={onClick}
+className={`
+    ui-status-badge
+    ui-status-badge--${badgeVariant}
+    ui-status-badge--${size}
+    ${onClick ? "ui-status-badge--clickable" : ""}
+`}
+
         >
-            {children}
+
+            {children || status}
+
         </span>
 
     );

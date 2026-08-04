@@ -109,18 +109,35 @@ function Expenses() {
 
             >
 
-                <FinanceToolbar
+ <FinanceToolbar
 
-                    searchTerm={searchTerm}
+    searchTerm={searchTerm}
 
-                    setSearchTerm={setSearchTerm}
+    setSearchTerm={setSearchTerm}
 
-                    category={category}
+    category={category}
 
-                    setCategory={setCategory}
+    setCategory={setCategory}
 
-                />
+    options={[
 
+        "All",
+
+        "Purchase",
+
+        "Salaries",
+
+        "Other",
+
+    ]}
+
+    searchPlaceholder="Search expenses..."
+
+    addButtonText="+ Add Expense"
+
+    addButtonLink="/finance"
+
+/>
                 <ExpenseTable
 
                     expenses={filteredExpenses}

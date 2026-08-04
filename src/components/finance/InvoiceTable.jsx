@@ -98,15 +98,17 @@ function InvoiceTable({
 
                             </td>
 
-                            <td>
+<td>
 
-                                <StatusBadge
+    <StatusBadge
 
-                                    status={invoice.status}
+        status={invoice.status}
 
-                                />
+        onClick={() => onToggleStatus(invoice._id)}
 
-                            </td>
+    />
+
+</td>
 
                             <td>
 
@@ -136,23 +138,7 @@ function InvoiceTable({
 
                                     </Button>
 
-                                    <Button
 
-                                        size="sm"
-
-                                        variant="secondary"
-
-                                        onClick={() =>
-                                            onToggleStatus(
-                                                invoice._id
-                                            )
-                                        }
-
-                                    >
-
-                                        Status
-
-                                    </Button>
 
                                 </div>
 

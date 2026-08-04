@@ -1,239 +1,228 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
 import { useBusinessData } from "../context/BusinessDataContext";
+
+import {
+
+    Card,
+
+    PageHeader,
+
+    SectionHeader,
+
+    SplitLayout,
+
+} from "../components/Ui";
+
+import {
+
+    PurchaseForm,
+
+    PurchaseKPIs,
+
+    PurchaseTable,
+
+} from "../components/purchases";
+
+import "./Purchases.css";
 
 function Purchases() {
 
-  const {
-    purchases,
-    createPurchase,
-  } = useBusinessData();
+    const {
 
-  const [form, setForm] = useState({
-    productName: "",
-    supplierName: "",
-    quantity: "",
-    purchasePrice: "",
-    gst: 18,
-    batchNumber: "",
-    expiryDate: "",
-    date: "",
-  });
+        purchases,
 
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-  };
+        createPurchase,
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    } = useBusinessData();
 
-    try {
+    const [form, setForm] = useState({
 
-      await createPurchase({
-        ...form,
-        quantity: Number(form.quantity),
-        purchasePrice: Number(form.purchasePrice),
-        gst: Number(form.gst),
-      });
-
-      alert("Purchase created successfully");
-
-      setForm({
         productName: "",
+
         supplierName: "",
+
         quantity: "",
+
         purchasePrice: "",
+
         gst: 18,
+
         batchNumber: "",
+
         expiryDate: "",
+
         date: "",
-      });
 
-    } catch (error) {
-      console.error(error);
+    });
 
-      alert("Failed to create purchase");
-    }
-  };
+    const handleChange = (event) => {
 
-  return (
-    <section className="space-y-6">
+        setForm({
 
-      <div>
-        <p className="text-sm uppercase tracking-[0.3em] text-emerald-300">
-          Supply Chain
-        </p>
+            ...form,
 
-        <h2 className="mt-2 text-3xl font-semibold tracking-tight text-white">
-          Purchases
-        </h2>
-      </div>
+            [event.target.name]:
+                event.target.value,
 
-      {/* PURCHASE FORM */}
-      <form
-        onSubmit={handleSubmit}
-        className="grid gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 md:grid-cols-2"
-      >
+        });
 
-        <input
-          type="text"
-          name="productName"
-          placeholder="Product Name"
-          value={form.productName}
-          onChange={handleChange}
-          className="rounded-xl bg-slate-900 p-3 text-white"
-          required
-        />
+    };
 
-        <input
-          type="text"
-          name="supplierName"
-          placeholder="Supplier Name"
-          value={form.supplierName}
-          onChange={handleChange}
-          className="rounded-xl bg-slate-900 p-3 text-white"
-          required
-        />
+    const handleSubmit = async (event) => {
 
-        <input
-          type="number"
-          name="quantity"
-          placeholder="Quantity"
-          value={form.quantity}
-          onChange={handleChange}
-          className="rounded-xl bg-slate-900 p-3 text-white"
-          required
-        />
+        event.preventDefault();
 
-        <input
-          type="number"
-          name="purchasePrice"
-          placeholder="Purchase Price"
-          value={form.purchasePrice}
-          onChange={handleChange}
-          className="rounded-xl bg-slate-900 p-3 text-white"
-          required
-        />
+        try {
 
-        <input
-          type="number"
-          name="gst"
-          placeholder="GST %"
-          value={form.gst}
-          onChange={handleChange}
-          className="rounded-xl bg-slate-900 p-3 text-white"
-        />
+            await createPurchase({
 
-        <input
-          type="text"
-          name="batchNumber"
-          placeholder="Batch Number"
-          value={form.batchNumber}
-          onChange={handleChange}
-          className="rounded-xl bg-slate-900 p-3 text-white"
-        />
+                ...form,
 
-        <input
-          type="date"
-          name="expiryDate"
-          placeholder="Expiry Date"
-          value={form.expiryDate}
-          onChange={handleChange}
-          className="rounded-xl bg-slate-900 p-3 text-white"
-        />
+                quantity: Number(form.quantity),
 
-        <input
-          type="date"
-          name="date"
-          placeholder="Purchase Date"
-          value={form.date}
-          onChange={handleChange}
-          className="rounded-xl bg-slate-900 p-3 text-white"
-          required
-        />
+                purchasePrice: Number(form.purchasePrice),
 
-        <button
-          type="submit"
-          className="rounded-full bg-emerald-400 px-5 py-3 font-semibold text-black transition hover:bg-emerald-300"
-        >
-          Create Purchase
-        </button>
+                gst: Number(form.gst),
 
-      </form>
+            });
 
-      {/* PURCHASE HISTORY */}
-      <div className="space-y-4">
+            setForm({
 
-        {purchases.length === 0 ? (
-          <p className="text-slate-400">
-            No purchases yet
-          </p>
-        ) : (
-          purchases.map((purchase) => (
+                productName: "",
 
-            <div
-              key={purchase._id}
-              className="rounded-2xl border border-white/10 bg-white/5 p-5"
-            >
+                supplierName: "",
 
-              <div className="flex items-center justify-between">
+                quantity: "",
 
-                <div>
-                  <h3 className="text-xl font-semibold text-white">
-                    {purchase.productName}
-                  </h3>
+                purchasePrice: "",
 
-                  <p className="text-sm text-slate-400">
-                    Supplier: {purchase.supplierName}
-                  </p>
-                </div>
+                gst: 18,
 
-                <div className="text-right">
-                  <p className="text-lg font-bold text-emerald-300">
-                    ₹{purchase.finalAmount}
-                  </p>
+                batchNumber: "",
 
-                  <p className="text-sm text-slate-400">
-                    Qty: {purchase.quantity}
-                  </p>
-                </div>
+                expiryDate: "",
 
-              </div>
+                date: "",
 
-              <div className="mt-4 grid gap-2 text-sm text-slate-300 md:grid-cols-4">
+            });
 
-                <p>
-                  Batch: {purchase.batchNumber || "-"}
-                </p>
+        } catch (error) {
 
-                <p>
-                  GST: {purchase.gst}%
-                </p>
+            console.error(error);
 
-                <p>
-                  Price: ₹{purchase.purchasePrice}
-                </p>
+        }
 
-                <p>
-                  Expiry: {
-                    purchase.expiryDate
-                      ? new Date(purchase.expiryDate).toLocaleDateString()
-                      : "-"
-                  }
-                </p>
+    };
 
-              </div>
+    const totalSpend = useMemo(
 
-            </div>
-          ))
-        )}
+        () =>
 
-      </div>
+            purchases.reduce(
 
-    </section>
-  );
+                (sum, purchase) =>
+
+                    sum +
+
+                    (purchase.finalAmount || 0),
+
+                0
+
+            ),
+
+        [purchases]
+
+    );
+
+    const supplierCount = useMemo(
+
+        () =>
+
+            new Set(
+
+                purchases.map(
+
+                    purchase => purchase.supplierName
+
+                )
+
+            ).size,
+
+        [purchases]
+
+    );
+
+    const averageOrderValue =
+
+        purchases.length
+
+            ? totalSpend /
+
+              purchases.length
+
+            : 0;
+            return (
+
+<>
+
+<PageHeader
+
+    eyebrow="Supply Chain"
+
+    title="Purchases"
+
+    subtitle="Manage supplier purchases and procurement."
+
+/>
+
+<PurchaseKPIs
+
+    totalPurchases={purchases.length}
+
+    totalSpend={totalSpend}
+
+    supplierCount={supplierCount}
+
+    averageOrderValue={averageOrderValue}
+
+/>
+
+<SplitLayout>
+
+<PurchaseForm
+
+    form={form}
+
+    handleChange={handleChange}
+
+    handleSubmit={handleSubmit}
+
+/>
+
+<Card>
+
+<SectionHeader
+
+    title="Purchase History"
+
+    subtitle="Latest procurement records."
+
+/>
+
+<PurchaseTable
+
+    purchases={purchases}
+
+/>
+
+</Card>
+
+</SplitLayout>
+</>
+
+);
+
 }
 
 export default Purchases;
