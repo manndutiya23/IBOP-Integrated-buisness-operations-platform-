@@ -1,0 +1,81 @@
+.employee-toolbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:24px;
+
+    margin-bottom:24px;
+
+    flex-wrap:wrap;
+
+}
+
+.employee-toolbar__left{
+
+    display:flex;
+
+    flex:1;
+
+    gap:16px;
+
+    flex-wrap:wrap;
+
+}
+
+.employee-toolbar__left .ui-input{
+
+    min-width:300px;
+
+}
+
+.employee-toolbar__left .ibop-select-group{
+
+    min-width:240px;
+
+}
+
+.employee-toolbar__right{
+
+    display:flex;
+
+    gap:12px;
+
+}
+
+@media(max-width:900px){
+
+.employee-toolbar{
+
+align-items:flex-start;
+
+}
+
+.employee-toolbar__left{
+
+width:100%;
+
+}
+
+.employee-toolbar__left .ui-input,
+
+.employee-toolbar__left .ibop-select-group{
+
+width:100%;
+
+min-width:100%;
+
+}
+
+.employee-toolbar__right{
+
+width:100%;
+
+justify-content:flex-end;
+
+}
+
+}

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { filterNavigationByRole } from "../config/navigation";
 import "./AppShell.css";
+import "../assets/logo.png";
 
 function AppShell({ user, logout }) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -11,7 +12,9 @@ function AppShell({ user, logout }) {
     <div className="app-shell">
       <aside className={`app-sidebar ${isSidebarOpen ? "is-open" : ""}`}>
         <div className="app-sidebar__brand">
-          <div className="app-sidebar__logo">SE</div>
+          <div className="app-sidebar__logo">
+            <img src={new URL("../assets/logo.png", import.meta.url).href} alt="IBOP Logo" className="app-sidebar__logo-image" />
+          </div>
           <div>
             <p className="app-sidebar__eyebrow">Shrinath Enterprises</p>
             <h1 className="app-sidebar__title">IBOP Platform</h1>

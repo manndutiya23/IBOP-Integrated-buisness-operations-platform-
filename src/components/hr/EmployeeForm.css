@@ -1,0 +1,28 @@
+.employee-form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:28px;
+
+}
+
+.employee-form__grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(260px,1fr));
+
+    gap:24px;
+
+}
+
+.employee-form__actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+}

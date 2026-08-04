@@ -1,0 +1,11 @@
+/* HR page specific styles */
+
+.hr-summary{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:24px;
+
+}

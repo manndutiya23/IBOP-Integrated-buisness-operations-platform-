@@ -1,43 +1,198 @@
+import { useMemo, useState } from "react";
+
 import { useBusinessData } from "../context/BusinessDataContext";
 import { useAuth } from "../context/AuthContext";
 
-const Employees = () => {
-  const { employees, deleteEmployee } = useBusinessData();
-  const { user } = useAuth();
-  const role = user?.role;
+import {
 
-  return (
-      <div className="bg-slate-900/80 p-6 rounded-3xl border border-white/10">
-        <h3 className="text-white mb-4">Employees</h3>
+    PageHeader,
 
-        {employees.length === 0 ? (
-          <p className="text-slate-400">No employees yet</p>
-        ) : (
-          employees.map((e) => (
-            <div
-              key={e._id}
-              className="flex justify-between border-b border-white/10 py-3"
+    PageSection,
+
+} from "../components/Ui";
+
+import {
+
+    EmployeeToolbar,
+
+    EmployeeTable,
+
+} from "../components/hr";
+
+function Employees() {
+
+    const {
+
+        employees,
+
+        deleteEmployee,
+
+    } = useBusinessData();
+
+    const { user } = useAuth();
+
+    const role = user?.role;
+
+    const [
+
+        searchTerm,
+
+        setSearchTerm,
+
+    ] = useState("");
+
+    const [
+
+        department,
+
+        setDepartment,
+
+    ] = useState("All");
+
+    const departments = useMemo(
+
+        () =>
+
+            [
+
+                ...new Set(
+
+                    employees
+
+                        .map(
+
+                            employee =>
+
+                                employee.department
+
+                        )
+
+                        .filter(Boolean)
+
+                ),
+
+            ],
+
+        [employees]
+
+    );
+
+    const filteredEmployees = useMemo(
+
+        () =>
+
+            employees.filter(employee => {
+
+                const matchesSearch =
+
+                    employee.name
+
+                        ?.toLowerCase()
+
+                        .includes(
+
+                            searchTerm.toLowerCase()
+
+                        )
+
+                    ||
+
+                    employee.email
+
+                        ?.toLowerCase()
+
+                        .includes(
+
+                            searchTerm.toLowerCase()
+
+                        );
+
+                const matchesDepartment =
+
+                    department === "All"
+
+                    ||
+
+                    employee.department ===
+
+                    department;
+
+                return (
+
+                    matchesSearch
+
+                    &&
+
+                    matchesDepartment
+
+                );
+
+            }),
+
+        [
+
+            employees,
+
+            searchTerm,
+
+            department,
+
+        ]
+
+    );
+
+    return (
+
+        <>
+
+            <PageHeader
+
+                eyebrow="Human Resources"
+
+                title="Employees"
+
+                subtitle="View, search and manage employee records."
+
+            />
+
+            <PageSection
+
+                title="Employee Directory"
+
+                subtitle="Browse all employees."
+
             >
-              <div>
-                <p>{e.name}</p>
-                <p className="text-xs text-slate-400">
-                  {e.role} • {e.phone} • {e.email}
-                </p>
-              </div>
-            {(role === "HR" || role === "Admin") && (
-              <button
-                onClick={() => deleteEmployee(e._id)}
-                className="text-red-400 text-sm"
-              >
-                Delete
-              </button>
-            )}
-            </div>
-          ))
-        )}
-      </div>
 
-  )
+                <EmployeeToolbar
+
+                    searchTerm={searchTerm}
+
+                    setSearchTerm={setSearchTerm}
+
+                    department={department}
+
+                    setDepartment={setDepartment}
+
+                    departments={departments}
+
+                />
+
+                <EmployeeTable
+
+                    employees={filteredEmployees}
+
+                    role={role}
+
+                    onDelete={deleteEmployee}
+
+                />
+
+            </PageSection>
+
+        </>
+
+    );
+
 }
 
-export default Employees
+export default Employees;
