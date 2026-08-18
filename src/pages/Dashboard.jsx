@@ -14,20 +14,11 @@ import { useAuth } from "../context/AuthContext";
 function Dashboard() {
   const {
     totalProducts,
-      totalSales,
-     totalRevenue,
-      lowStockProducts,
-      sales,
+    totalSales,
+    totalRevenue,
+    lowStockProducts,
   } = useBusinessData();
   const { user } = useAuth();
-  const role = user?.role;
-
-  const modules = [
-    { name: "Sales", path: "/sales-module",  roles: ["Sales", "Management", "Admin"], description: "Track orders and create new sales" },
-    { name: "Finance", path: "/finance-module", roles: ["Finance", "Management", "Admin"], description: "Manage financial records and reports" },
-    { name: "Supply chain", path: "/product", roles: ["Supply Chain", "Management", "Admin"], description: "Manage supply chain operations" },
-    { name: "HR", path: "/hr-module", roles: ["HR", "Admin"], description: "Manage human resources" },
-  ];
 
   
 

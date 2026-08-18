@@ -55,8 +55,7 @@ function CreateSale() {
     }));
   };
 
-const handleSubmit = async (event) => {
-  
+const handleSubmit = async () => {
   setErrorMessage("");
 
   const quantity = Number(formData.quantity || 0);

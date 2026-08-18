@@ -1,137 +1,254 @@
 import { useState } from "react";
-import API from "../utils/axiosConfig";
 import { useNavigate } from "react-router-dom";
+
+import API from "../utils/axiosConfig";
 import { useAuth } from "../context/AuthContext";
+
+import "./Login.css";
 
 function Login() {
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const { login } = useAuth();
+    const { login } = useAuth();
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const handleChange = (e) => {
-
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
+    const [form, setForm] = useState({
+        email: "",
+        password: "",
     });
-  };
 
-  const handleSubmit = async (e) => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    e.preventDefault();
-    setErrorMessage("");
-    setIsSubmitting(true);
+    const [errorMessage, setErrorMessage] = useState("");
 
-    try {
+    const handleChange = (event) => {
 
-      const res = await API.post("/employees/login", form);
+        setForm({
+            ...form,
+            [event.target.name]: event.target.value,
+        });
 
-      login(
-        res.data.employee,
-        res.data.token
-      );
+    };
 
-      navigate("/");
+    const handleSubmit = async (event) => {
 
-    } catch (error) {
+        event.preventDefault();
 
-      console.error(error);
-      setErrorMessage("Invalid credentials. Please check your email and password.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+        setErrorMessage("");
 
-  return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden ibop-surface-dark px-4 py-8 sm:px-6 lg:px-8 -mt-8">
-  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        setIsSubmitting(true);
 
-  <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/10 blur-3xl" />
+        try {
 
-  <div className="absolute left-1/4 top-1/3 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
+            const res = await API.post(
+                "/employees/login",
+                form
+            );
 
-  <div className="absolute right-1/4 bottom-1/3 h-72 w-72 rounded-full bg-emerald-400/10 blur-3xl" />
+            login(
+                res.data.employee,
+                res.data.token
+            );
 
-</div>
+            navigate("/");
 
-      <div className="relative w-full max-w-md rounded-3xl border border-white/10 ibop-card-dark p-8 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-10">
-        <div className="mb-8">
-          <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-400/30 bg-emerald-400/10 text-sm font-bold tracking-wider text-emerald-300">
-            IB
-          </div>
+        } catch (error) {
 
-          <p className="text-xs uppercase tracking-[0.25em] text-emerald-300">IBOP</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">Sign in to your workspace</h1>
-          <p className="mt-2 text-sm text-slate-400">Integrated Business Operations Platform</p>
-        </div>
+            console.error(error);
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-slate-200">
-              Work Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              name="email"
-              placeholder="name@company.com"
-              value={form.email}
-              onChange={handleChange}
-              className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-emerald-400/60 focus:ring-2 focus:ring-emerald-400/20"
-              required
-              autoComplete="email"
-            />
-          </div>
+            setErrorMessage(
+                "Invalid credentials. Please check your email and password."
+            );
 
-          <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium text-slate-200">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={form.password}
-              onChange={handleChange}
-              className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-emerald-400/60 focus:ring-2 focus:ring-emerald-400/20"
-              required
-              autoComplete="current-password"
-            />
-          </div>
+        } finally {
 
-          {errorMessage && (
-            <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
-              {errorMessage}
-            </p>
-          )}
+            setIsSubmitting(false);
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-400 py-3 font-semibold text-slate-950 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:bg-emerald-500/60 disabled:text-slate-900"
-          >
-            {isSubmitting && (
-              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-slate-900/30 border-t-slate-900" />
-            )}
-            {isSubmitting ? "Signing in..." : "Login"}
-          </button>
-        </form>
+        }
 
-        <p className="mt-6 text-center text-xs text-slate-500">
-          Secure access for authorized IBOP users only
-        </p>
-      </div>
-    </div>
-  );
+    };
+
+    return (
+
+        <main className="login-page">
+
+            <div className="login-page__background">
+
+                <div className="login-page__glow login-page__glow--one" />
+
+                <div className="login-page__glow login-page__glow--two" />
+
+            </div>
+
+            <section className="login-card">
+
+                {/* Brand */}
+
+                <div className="login-brand">
+
+                    <div className="login-brand__logo">
+
+                        <span>SE</span>
+
+                    </div>
+
+                    <div>
+
+                        <p className="login-brand__company">
+
+                            SHRINATH ENTERPRISES
+
+                        </p>
+
+                        <p className="login-brand__product">
+
+                            IBOP
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                {/* Heading */}
+
+                <div className="login-heading">
+
+                    <p className="login-heading__eyebrow">
+
+                        INTEGRATED BUSINESS OPERATIONS PLATFORM
+
+                    </p>
+
+                    <h1>
+
+                        Welcome back
+
+                    </h1>
+
+                    <p>
+
+                        Sign in to access your IBOP workspace.
+
+                    </p>
+
+                </div>
+
+                {/* Form */}
+
+                <form
+                    onSubmit={handleSubmit}
+                    className="login-form"
+                >
+
+                    <div className="login-field">
+
+                        <label htmlFor="email">
+
+                            Work Email
+
+                        </label>
+
+                        <input
+                            id="email"
+                            type="email"
+                            name="email"
+                            placeholder="name@company.com"
+                            value={form.email}
+                            onChange={handleChange}
+                            autoComplete="email"
+                            required
+                        />
+
+                    </div>
+
+                    <div className="login-field">
+
+                        <label htmlFor="password">
+
+                            Password
+
+                        </label>
+
+                        <input
+                            id="password"
+                            type="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            value={form.password}
+                            onChange={handleChange}
+                            autoComplete="current-password"
+                            required
+                        />
+
+                    </div>
+
+                    {errorMessage && (
+
+                        <div className="login-error">
+
+                            {errorMessage}
+
+                        </div>
+
+                    )}
+
+                    <button
+                        type="submit"
+                        className="login-button"
+                        disabled={isSubmitting}
+                    >
+
+                        {isSubmitting ? (
+
+                            <>
+
+                                <span className="login-spinner" />
+
+                                Signing in...
+
+                            </>
+
+                        ) : (
+
+                            "Sign in"
+
+                        )}
+
+                    </button>
+
+                </form>
+
+                {/* Footer */}
+
+                <div className="login-footer">
+
+                    <span className="login-footer__dot" />
+
+                    <span>
+
+                        Secure access for authorized users only
+
+                    </span>
+
+                </div>
+
+                <div className="login-footer__company">
+
+                    Shrinath Enterprises
+
+                    <span>•</span>
+
+                    IBOP v1.0.0
+
+                </div>
+
+            </section>
+
+        </main>
+
+    );
+
 }
 
 export default Login;

@@ -30,15 +30,11 @@ function FinanceToolbar({
             <div className="finance-toolbar__left">
 
                 <Input
-
-                  
-
                     value={searchTerm}
-
+                    placeholder={searchPlaceholder}
                     onChange={(event) =>
                         setSearchTerm(event.target.value)
                     }
-
                 />
 
   <Select

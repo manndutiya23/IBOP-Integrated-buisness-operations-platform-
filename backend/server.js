@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
 import productRoutes from "./routes/productRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
@@ -9,8 +11,13 @@ import invoiceRoutes from "./routes/invoiceRoutes.js";
 import purchaseRoutes from "./routes/purchaseRoutes.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-dotenv.config();
+// Load local values only as a fallback. Deployment platforms should provide
+// environment variables directly via their secret store.
+dotenv.config({ path: path.resolve(__dirname, ".env"), override: false });
+dotenv.config({ path: path.resolve(__dirname, "..", ".env"), override: false });
 
 const app = express();
 const allowedOrigins = process.env.CORS_ORIGIN

@@ -79,12 +79,18 @@ Customer "Tech Corp" orders 100 units of product "Widget A" at ₹500/unit with 
 | **Build Tool** | Vite | ^8.0.4 | Fast module bundler and dev server |
 | **Routing** | React Router DOM | ^7.14.2 | Client-side navigation and protected routes |
 | **HTTP Client** | Axios | ^1.15.2 | API communication with automatic token injection |
-| **Styling** | Tailwind CSS | ^3.4.19 | Utility-first CSS framework for responsive design |
+| **Styling** | Tailwind CSS | ^3.4.19 | Utility-first CSS framework for the branded UI shell and responsive layouts |
 | **CSS Processing** | PostCSS | ^8.5.10 | CSS transformation and autoprefixing |
 | **CSS Autoprefixer** | Autoprefixer | ^10.5.0 | Browser-specific CSS prefix support |
 | **Charts/Graphs** | Recharts | ^3.8.1 | React charting library for analytics visualization |
 | **PDF Generation** | jsPDF | ^4.2.1 | Client-side PDF export for invoices and reports |
 | **Package Manager** | npm | N/A | Dependency management |
+
+### Frontend Branding and UI Direction
+- The authenticated shell is branded for Shrinath Enterprises while keeping IBOP as the platform name.
+- The visual identity uses burgundy/maroon and navy accents on light operational surfaces, with a darker branded login screen.
+- Body copy uses Work Sans and headings use Poppins, with the logo, sidebar, topbar, KPI cards, and dashboards all following the same brand language.
+- The frontend favors reusable card, table, section header, and split-layout patterns instead of page-specific one-off layouts.
 
 ### Backend Technologies
 | Component | Technology | Version | Purpose |
@@ -144,27 +150,18 @@ Customer "Tech Corp" orders 100 units of product "Widget A" at ₹500/unit with 
 - **Build:** Vite production build (`vite build`)
 
 ### State Management
-- **Frontend State:**
-  - **Local Component State:** React `useState` hook for form inputs
-  - **Context API:** AuthContext (user authentication state), BusinessDataContext (shared business data)
-  - **Local Storage:** JWT token, user object persistence across sessions
-  - **Automatic Sync:** Axios interceptors auto-attach JWT tokens to requests
-
-- **Backend State:**
-  - **Stateless:** Express server processes requests without session storage
-  - **Persistent State:** MongoDB collections maintain data
-  - **Real-time Sync:** Frontend refetches data after mutations
+- **AuthContext:** Stores the signed-in employee and JWT token in localStorage and exposes login/logout helpers.
+- **BusinessDataContext / BusinessDataProvider:** Centralizes shared business data for products, sales, purchases, invoices, employees, and expenses.
+- **Local Component State:** Forms, filters, dialogs, and table controls use `useState` for local UI state.
+- **Sync Model:** Mutations trigger refetches or context updates so dashboard KPIs, tables, and charts stay in sync without Redux.
 
 ### Styling Libraries
-- **Tailwind CSS v3.4.19** - Utility-first CSS framework
-  - Custom colors: `emerald`, `cyan`, `slate`
-  - Custom fonts: `Work Sans`, `Poppins`
-  - Responsive design with breakpoints (sm, md, lg, xl)
-  - Dark theme (slate-950, slate-900 backgrounds)
-  - Gradient effects and blur utilities
-
-- **PostCSS** - CSS transformation pipeline
-- **Autoprefixer** - Cross-browser compatibility
+- **Tailwind CSS v3.4.19** - Primary utility-first styling layer for layout, spacing, responsive behavior, and interaction states.
+- **Custom CSS Modules / page styles** - Used for the branded AppShell, dashboard widgets, forms, tables, and module-specific visuals.
+- **Brand tokens** - Burgundy/maroon and navy color tokens are defined in the global stylesheet and reused across cards, buttons, sidebar, and charts.
+- **Typography** - Work Sans for general UI text and Poppins for headings, page titles, and hero copy.
+- **Visual style** - Light business dashboard surfaces with soft shadows, rounded cards, and subtle gradients; the login page uses a darker contrast-forward treatment.
+- **PostCSS and Autoprefixer** - CSS transformation and browser compatibility support.
 
 ### AI/ML Integrations
 **None currently implemented.**

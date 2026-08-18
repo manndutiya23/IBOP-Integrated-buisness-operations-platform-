@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { useBusinessData } from "../context/BusinessDataContext";
-import { useAuth } from "../context/AuthContext";
 
 import {
     PageHeader,
@@ -25,10 +24,6 @@ function Sales() {
         createInvoice,
 
     } = useBusinessData();
-
-    const { user } = useAuth();
-
-    const role = user?.role;
 
     const [selectedSale, setSelectedSale] =
         useState(null);
