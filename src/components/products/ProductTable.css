@@ -1,3 +1,28 @@
-.product-table{
+.product-table {
+  width: 100%;
+  overflow-x: auto;
+}
 
+.product-table__code {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.product-table__meta {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-secondary, #777);
+  font-size: 0.75rem;
+}
+
+.product-table__tax {
+  min-width: 105px;
+  white-space: nowrap;
+}
+
+.product-table__tax span {
+  display: block;
+  font-size: 0.78rem;
+  line-height: 1.5;
 }
