@@ -75,10 +75,10 @@ function parseCsv(text) {
 }
 
 function Products() {
-  const { products, addProduct } = useBusinessData();
+  const { products, addProduct, refreshProducts } = useBusinessData();
   const { user } = useAuth();
   const role = user?.role;
-  const canManage = role === "Admin" || role === "Supply Chain" || role === "Management";
+  const canManage = role === "Admin" || role === "Supply Chain";
   const canImport = role === "Admin" || role === "Supply Chain";
   const formRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -195,10 +195,7 @@ function Products() {
       const response = await API.post("/products/import", { rows: importRows, dryRun });
       setImportReport(response.data.report);
       if (!dryRun) {
-        await API.get("/products").then(({ data }) => {
-          // Keep the shared context in sync through the provider's existing fetch path.
-          window.dispatchEvent(new CustomEvent("ibop:products-imported", { detail: data }));
-        });
+        await refreshProducts();
       }
     } catch (error) {
       console.error("PRODUCT IMPORT ERROR:", error);
