@@ -5,6 +5,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  importProductCatalogue,
 } from "../controllers/productController.js";
 
 import {
@@ -17,32 +18,28 @@ const router = express.Router();
 router.get(
   "/",
   protect,
-  authorizeRoles(
-    "Admin",
-    "Supply Chain",
-    "Sales",
-    "Management"
-  ),
+  authorizeRoles("Admin", "Supply Chain", "Sales", "Management"),
   getProducts
+);
+
+router.post(
+  "/import",
+  protect,
+  authorizeRoles("Admin", "Supply Chain"),
+  importProductCatalogue
 );
 
 router.post(
   "/",
   protect,
-  authorizeRoles(
-    "Admin",
-    "Supply Chain"
-  ),
+  authorizeRoles("Admin", "Supply Chain"),
   createProduct
 );
 
 router.put(
   "/:id",
   protect,
-  authorizeRoles(
-    "Admin",
-    "Supply Chain"
-  ),
+  authorizeRoles("Admin", "Supply Chain"),
   updateProduct
 );
 
