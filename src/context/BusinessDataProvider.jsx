@@ -348,6 +348,7 @@ const deleteEmployee = async (id) => {
         deleteEmployee,
         purchases,
         createPurchase,
+        refreshProducts: fetchProducts,
       }}
     >
       {children}
