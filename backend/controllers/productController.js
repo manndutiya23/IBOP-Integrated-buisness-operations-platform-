@@ -95,8 +95,37 @@ export const getProducts = async (req, res) => {
 // Legacy/manual inventory product creation remains supported.
 export const createProduct = async (req, res) => {
   try {
-    const { name, price = 0, stock = 0, batchNumber, expiryDate } = req.body;
-    const product = new Product({ name, price, stock, batchNumber, expiryDate });
+    const {
+      productCode,
+      nick,
+      manufacturerDivision,
+      name,
+      productType,
+      igstRate,
+      cgstRate,
+      sgstRate,
+      hsnCode,
+      price = 0,
+      stock = 0,
+      batchNumber,
+      expiryDate,
+    } = req.body;
+
+    const product = new Product({
+      productCode,
+      nick,
+      manufacturerDivision,
+      name,
+      productType,
+      igstRate,
+      cgstRate,
+      sgstRate,
+      hsnCode,
+      price,
+      stock,
+      batchNumber,
+      expiryDate,
+    });
     const savedProduct = await product.save();
     res.status(201).json(savedProduct);
   } catch (error) {
