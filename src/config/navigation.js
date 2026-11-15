@@ -1,41 +1,61 @@
 export const navigationSections = [
   {
-    title: "IBOP Platform",
+    kind: "link",
+    title: "Dashboard",
+    path: "/",
+    roles: ["Admin", "Management", "Sales", "Finance", "HR", "Supply Chain"],
+  },
+  {
+    kind: "module",
+    title: "Sales",
+    roles: ["Sales", "Management", "Admin"],
     items: [
-      { label: "Dashboard", path: "/", roles: ["Admin", "Management", "Sales", "Finance", "HR", "Supply Chain"] },
+      { label: "Overview", path: "/sales-module", roles: ["Sales", "Management", "Admin"] },
+      { label: "Sales & Orders", path: "/sales", roles: ["Sales", "Management", "Admin"] },
+      { label: "Create Sale", path: "/sales/new", roles: ["Sales", "Management", "Admin"] },
     ],
   },
   {
-    title: "Operations",
-    items: [
-      { label: "Inventory", path: "/products", roles: ["Supply Chain", "Management", "Admin"] },
-      { label: "Sales & Orders", path: "/sales-module", roles: ["Sales", "Management", "Admin"] },
-      { label: "Purchases", path: "/purchases", roles: ["Supply Chain", "Management", "Admin"] },
-      { label: "Supply Chain", path: "/supply-chain", roles: ["Supply Chain", "Management", "Admin"] },
-    ],
-  },
-  {
+    kind: "module",
     title: "Finance",
+    roles: ["Finance", "Management", "Admin"],
     items: [
+      { label: "Overview", path: "/finance-module", roles: ["Finance", "Management", "Admin"] },
+      { label: "Finance", path: "/finance", roles: ["Finance", "Management", "Admin"] },
       { label: "Invoices", path: "/invoices", roles: ["Finance", "Management", "Admin"] },
       { label: "Expenses", path: "/expenses", roles: ["Finance", "Management", "Admin"] },
-      { label: "Accounts", path: "/finance-module", roles: ["Finance", "Management", "Admin"] },
     ],
   },
   {
-    title: "Workforce",
+    kind: "module",
+    title: "Supply Chain",
+    roles: ["Supply Chain", "Management", "Admin"],
     items: [
+      { label: "Inventory", path: "/products", roles: ["Supply Chain", "Management", "Admin"] },
+      { label: "Purchases", path: "/purchases", roles: ["Supply Chain", "Management", "Admin"] },
+    ],
+  },
+  {
+    kind: "module",
+    title: "HR",
+    roles: ["HR", "Admin"],
+    items: [
+      { label: "Overview", path: "/hr-module", roles: ["HR", "Admin"] },
       { label: "Employees", path: "/employees", roles: ["HR", "Admin"] },
-      { label: "HR & Payroll", path: "/hr-module", roles: ["HR", "Admin"] },
+      { label: "HR & Payroll", path: "/hr", roles: ["HR", "Admin"] },
     ],
   },
 ];
 
 export function filterNavigationByRole(userRole) {
   return navigationSections
-    .map((section) => ({
-      ...section,
-      items: section.items.filter((item) => item.roles.includes(userRole)),
-    }))
-    .filter((section) => section.items.length > 0);
+    .map((section) => {
+      if (section.kind === "link") {
+        return section.roles.includes(userRole) ? section : null;
+      }
+
+      const items = section.items.filter((item) => item.roles.includes(userRole));
+      return items.length ? { ...section, items } : null;
+    })
+    .filter(Boolean);
 }
