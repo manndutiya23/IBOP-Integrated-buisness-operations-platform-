@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import API from "../utils/axiosConfig";
 import {
+  Button,
   Card,
   DataTable,
   EmptyState,
@@ -18,12 +20,19 @@ const displayValue = (value) =>
   value === null || value === undefined || value === "" ? "—" : value;
 
 function ProductList() {
+  const { user } = useAuth();
+  const canCreate = ["Admin", "Supply Chain"].includes(user?.role);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
   const [manufacturerFilter, setManufacturerFilter] = useState("All");
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
+  const [formData, setFormData] = useState({ productCode: "", name: "", nick: "", manufacturerDivision: "", productType: "", hsnCode: "", igstRate: "", cgstRate: "", sgstRate: "" });
 
   useEffect(() => {
     let active = true;
@@ -91,6 +100,42 @@ function ProductList() {
     });
   }, [products, searchTerm, typeFilter, manufacturerFilter]);
 
+  const handleFormChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((current) => ({ ...current, [name]: value }));
+    setFormError("");
+    setFormSuccess("");
+  };
+
+  const handleCreateProduct = async (event) => {
+    event.preventDefault();
+    setSaving(true);
+    setFormError("");
+    setFormSuccess("");
+    const payload = {
+      ...formData,
+      productCode: formData.productCode.trim(),
+      name: formData.name.trim(),
+      igstRate: formData.igstRate === "" ? null : Number(formData.igstRate),
+      cgstRate: formData.cgstRate === "" ? null : Number(formData.cgstRate),
+      sgstRate: formData.sgstRate === "" ? null : Number(formData.sgstRate),
+    };
+    try {
+      const response = await API.post("/product-catalogue", payload);
+      setProducts((current) => [...current, response.data.product].sort((a, b) =>
+        a.productCode.localeCompare(b.productCode, undefined, { numeric: true, sensitivity: "base" })
+      ));
+      setFormData({ productCode: "", name: "", nick: "", manufacturerDivision: "", productType: "", hsnCode: "", igstRate: "", cgstRate: "", sgstRate: "" });
+      setShowCreateForm(false);
+      setFormSuccess(response.data.message || "Product added to the catalogue.");
+    } catch (requestError) {
+      const apiErrors = requestError.response?.data?.errors;
+      setFormError(apiErrors?.length ? apiErrors.join(" ") : requestError.response?.data?.message || "Unable to add product.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const missingHsnCount = products.filter((product) => !product.hsnCode).length;
   const classifiedCount = products.filter((product) => product.productType).length;
 
@@ -101,6 +146,42 @@ function ProductList() {
         title="Product List"
         subtitle="Browse the products Shrinath Enterprises deals in. This catalogue is separate from physical warehouse inventory."
       />
+
+      {canCreate && (
+        <div className="product-list-page__create-actions">
+          <Button onClick={() => { setShowCreateForm((open) => !open); setFormError(""); }}>
+            {showCreateForm ? "Close Form" : "+ Add New Product"}
+          </Button>
+        </div>
+      )}
+
+      {formSuccess && <div className="product-list-page__success" role="status">{formSuccess}</div>}
+
+      {showCreateForm && canCreate && (
+        <PageSection title="Register a New Product" subtitle="Register a product the business may deal in. This creates a catalogue record only, not warehouse stock.">
+          <Card className="product-list-page__create-card">
+            <form onSubmit={handleCreateProduct}>
+              <div className="product-list-page__form-grid">
+                <Input label="Product Code" name="productCode" value={formData.productCode} onChange={handleFormChange} placeholder="Unique product code" maxLength={64} required />
+                <Input label="Product Name" name="name" value={formData.name} onChange={handleFormChange} placeholder="Full product name" maxLength={200} required />
+                <Input label="Nickname" name="nick" value={formData.nick} onChange={handleFormChange} placeholder="Optional short name" maxLength={120} />
+                <Input label="Manufacturer / Division" name="manufacturerDivision" value={formData.manufacturerDivision} onChange={handleFormChange} placeholder="Manufacturer or division" maxLength={200} />
+                <Input label="Product Type" name="productType" value={formData.productType} onChange={handleFormChange} placeholder="e.g. Tablet, Syrup, Surgical" maxLength={100} />
+                <Input label="HSN Code" name="hsnCode" value={formData.hsnCode} onChange={handleFormChange} placeholder="HSN code" maxLength={32} />
+                <Input label="IGST Rate (%)" name="igstRate" type="number" min="0" max="100" step="0.01" value={formData.igstRate} onChange={handleFormChange} placeholder="Optional" />
+                <Input label="CGST Rate (%)" name="cgstRate" type="number" min="0" max="100" step="0.01" value={formData.cgstRate} onChange={handleFormChange} placeholder="Optional" />
+                <Input label="SGST Rate (%)" name="sgstRate" type="number" min="0" max="100" step="0.01" value={formData.sgstRate} onChange={handleFormChange} placeholder="Optional" />
+              </div>
+              <p className="product-list-page__form-note">Product Code and Product Name are required. Tax details can remain blank until confirmed. Stock, batch, expiry and purchase price are intentionally excluded.</p>
+              {formError && <div className="product-list-page__form-error" role="alert">{formError}</div>}
+              <div className="product-list-page__form-actions">
+                <Button type="button" variant="secondary" disabled={saving} onClick={() => { setShowCreateForm(false); setFormError(""); }}>Cancel</Button>
+                <Button type="submit" disabled={saving}>{saving ? "Saving…" : "Save to Product Catalogue"}</Button>
+              </div>
+            </form>
+          </Card>
+        </PageSection>
+      )}
 
       <div className="product-list-page__metrics">
         <KPICard
