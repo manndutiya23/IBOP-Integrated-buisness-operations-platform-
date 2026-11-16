@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
 import productRoutes from "./routes/productRoutes.js";
+import productCatalogueRoutes from "./routes/productCatalogueRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
 import saleRoutes from "./routes/saleRoutes.js";
 import invoiceRoutes from "./routes/invoiceRoutes.js";
@@ -45,6 +46,8 @@ app.use(express.json());
 
 console.log("Mounting routes...");
 app.use("/api/products", productRoutes);
+app.use("/api/product-catalogue", productCatalogueRoutes);
+console.log("✓ /api/product-catalogue mounted");
 console.log("✓ /api/products mounted");
 app.use("/api/expenses", expenseRoutes);
 console.log("✓ /api/expenses mounted");
