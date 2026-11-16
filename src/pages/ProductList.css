@@ -90,3 +90,12 @@
 .product-list-page__success{color:#17633a;background:#edf9f1;border:1px solid #c5e9d1}
 @media(max-width:1050px){.product-list-page__form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.product-list-page__form-grid{grid-template-columns:1fr}.product-list-page__form-actions{flex-direction:column-reverse}.product-list-page__form-actions button{width:100%}}
+\n
+.product-list-page__actions-cell {
+  min-width: 100px;
+  text-align: right;
+}
+
+.product-list-page__actions-cell .ui-button {
+  white-space: nowrap;
+}
