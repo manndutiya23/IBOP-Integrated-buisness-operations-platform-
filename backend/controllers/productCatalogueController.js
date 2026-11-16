@@ -89,3 +89,32 @@ export const createProductCatalogueEntry = async (req, res) => {
     return res.status(500).json({ message: "Unable to add product to the catalogue." });
   }
 };
+
+
+/**
+ * Permanently remove a product master record.
+ * This does not touch the separate warehouse Product collection.
+ */
+export const deleteProductCatalogueEntry = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!/^[a-f\\d]{24}$/i.test(id)) {
+      return res.status(400).json({ message: "Invalid product catalogue ID." });
+    }
+
+    const deletedProduct = await ProductCatalogue.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return res.status(404).json({ message: "Product was not found in the catalogue." });
+    }
+
+    return res.status(200).json({
+      message: `Product "${deletedProduct.name}" (${deletedProduct.productCode}) was removed from the catalogue.`,
+      deletedProductId: deletedProduct._id,
+    });
+  } catch (error) {
+    console.error("DELETE PRODUCT CATALOGUE ERROR:", error);
+    return res.status(500).json({ message: "Unable to delete product from the catalogue." });
+  }
+};
