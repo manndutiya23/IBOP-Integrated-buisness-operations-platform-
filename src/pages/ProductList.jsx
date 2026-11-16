@@ -22,6 +22,7 @@ const displayValue = (value) =>
 function ProductList() {
   const { user } = useAuth();
   const canCreate = ["Admin", "Supply Chain"].includes(user?.role);
+  const canDelete = ["Admin", "Supply Chain"].includes(user?.role);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -30,6 +31,7 @@ function ProductList() {
   const [manufacturerFilter, setManufacturerFilter] = useState("All");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deletingProductId, setDeletingProductId] = useState(null);
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
   const [formData, setFormData] = useState({ productCode: "", name: "", nick: "", manufacturerDivision: "", productType: "", hsnCode: "", igstRate: "", cgstRate: "", sgstRate: "" });
@@ -136,6 +138,31 @@ function ProductList() {
     }
   };
 
+  const handleDeleteProduct = async (product) => {
+    const confirmed = window.confirm(
+      `Delete "${product.name}" (Product Code: ${product.productCode}) from the product catalogue?\\n\\nThis action cannot be undone. It will not change warehouse inventory or existing stock records.`
+    );
+
+    if (!confirmed) return;
+
+    setDeletingProductId(product._id);
+    setFormError("");
+    setFormSuccess("");
+
+    try {
+      const response = await API.delete(`/product-catalogue/${product._id}`);
+      setProducts((current) => current.filter((item) => item._id !== product._id));
+      setFormSuccess(response.data.message || "Product removed from the catalogue.");
+    } catch (requestError) {
+      setFormError(
+        requestError.response?.data?.message ||
+          "Unable to delete this product. Please try again."
+      );
+    } finally {
+      setDeletingProductId(null);
+    }
+  };
+
   const missingHsnCount = products.filter((product) => !product.hsnCode).length;
   const classifiedCount = products.filter((product) => product.productType).length;
 
@@ -156,6 +183,7 @@ function ProductList() {
       )}
 
       {formSuccess && <div className="product-list-page__success" role="status">{formSuccess}</div>}
+      {formError && !showCreateForm && <div className="product-list-page__form-error" role="alert">{formError}</div>}
 
       {showCreateForm && canCreate && (
         <PageSection title="Register a New Product" subtitle="Register a product the business may deal in. This creates a catalogue record only, not warehouse stock.">
@@ -285,6 +313,7 @@ function ProductList() {
                       <th>HSN Code</th>
                       <th>GST</th>
                       <th>Record</th>
+                      {canDelete && <th>Actions</th>}
                     </tr>
                   </thead>
                   <tbody>
@@ -302,6 +331,20 @@ function ProductList() {
                           <span>SGST: {displayValue(product.sgstRate)}%</span>
                         </td>
                         <td><StatusBadge variant="success">Listed</StatusBadge></td>
+                        {canDelete && (
+                          <td className="product-list-page__actions-cell">
+                            <Button
+                              type="button"
+                              variant="danger"
+                              size="sm"
+                              disabled={deletingProductId === product._id}
+                              onClick={() => handleDeleteProduct(product)}
+                              aria-label={`Delete ${product.name}`}
+                            >
+                              {deletingProductId === product._id ? "Deleting…" : "Delete"}
+                            </Button>
+                          </td>
+                        )}
                       </tr>
                     ))}
                   </tbody>
