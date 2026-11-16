@@ -31,6 +31,7 @@ export const navigationSections = [
     title: "Supply Chain",
     roles: ["Supply Chain", "Management", "Admin"],
     items: [
+      { label: "Product List", path: "/product-list", roles: ["Supply Chain", "Management", "Admin"] },
       { label: "Inventory", path: "/products", roles: ["Supply Chain", "Management", "Admin"] },
       { label: "Purchases", path: "/purchases", roles: ["Supply Chain", "Management", "Admin"] },
     ],
