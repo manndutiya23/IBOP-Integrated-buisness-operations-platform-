@@ -1,11 +1,17 @@
-/* Purchases page specific styles */
-
-.purchase-summary{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:24px;
-
-}
+.purchase-summary{display:flex;flex-direction:column;gap:24px}
+.purchase-invoices-list{display:flex;flex-direction:column;gap:18px}
+.purchase-invoice-card{border:1px solid var(--border-color,#e5e7eb);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.purchase-invoice-card__header{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.purchase-invoice-card__header div{color:var(--text-secondary,#64748b);font-size:13px}
+.purchase-invoice-card__header strong{color:var(--text-primary,#111827);font-size:15px}
+.purchase-invoice-status{font-weight:600;margin-top:4px}
+.purchase-invoice-card__actions{display:flex;justify-content:flex-end}
+.purchase-receipt{padding:14px;background:var(--surface-secondary,#f8fafc);border-radius:10px;display:flex;flex-direction:column;gap:14px}
+.purchase-receipt__line{padding:12px 0;border-bottom:1px solid var(--border-color,#e5e7eb)}
+.purchase-receipt__line>label{display:flex;align-items:center;gap:8px;font-weight:600}
+.purchase-receipt__line span{font-weight:400;color:var(--text-secondary,#64748b)}
+.purchase-order-lines{display:flex;flex-direction:column;gap:16px}
+.purchase-order-line{display:grid;grid-template-columns:minmax(180px,2fr) repeat(3,minmax(110px,1fr)) auto;gap:12px;align-items:end;padding:14px;border:1px solid var(--border-color,#e5e7eb);border-radius:10px}
+.purchase-form input,.purchase-form select,.purchase-receipt input:not([type=checkbox]){width:100%;min-height:40px;padding:8px 10px;border:1px solid var(--border-color,#cbd5e1);border-radius:8px;background:var(--surface-primary,#fff);color:var(--text-primary,#111827)}
+@media(max-width:900px){.purchase-order-line{grid-template-columns:1fr 1fr}.purchase-order-line .ibop-input-group:first-child{grid-column:1/-1}}
+@media(max-width:560px){.purchase-order-line{grid-template-columns:1fr}.purchase-order-line .ibop-input-group:first-child{grid-column:auto}}
