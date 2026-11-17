@@ -35,6 +35,9 @@ function ManufacturerList() {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [importError, setImportError] = useState("");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [savingSupplier, setSavingSupplier] = useState(false);
+  const [supplierForm, setSupplierForm] = useState({ cCode: "", ledgerAccount: "", city: "", area: "", state: "", pinCode: "", email: "", gstin: "", contactPerson: "", telephone: "", mobile: "", status: "SUPP" });
 
   const loadRecords = async () => {
     try {
@@ -77,6 +80,10 @@ function ManufacturerList() {
     } catch (err) { setImportError(err.message || "Could not read this CSV."); }
   };
 
+  const addSupplier = async (event) => { event.preventDefault(); setSavingSupplier(true); setImportError(""); setNotice(""); try { await API.post("/manufacturers", supplierForm); setSupplierForm({ cCode: "", ledgerAccount: "", city: "", area: "", state: "", pinCode: "", email: "", gstin: "", contactPerson: "", telephone: "", mobile: "", status: "SUPP" }); setShowAddForm(false); setNotice("Supplier added to Manufacturer List."); await loadRecords(); } catch (err) { setImportError(err.response?.data?.message || "Unable to add supplier."); } finally { setSavingSupplier(false); } };
+
+  const removeSupplier = async (supplier) => { if (!window.confirm("Delete supplier " + supplier.ledgerAccount + "? Suppliers linked to purchase invoices cannot be deleted.")) return; try { await API.delete("/manufacturers/" + supplier._id); setNotice("Supplier deleted."); await loadRecords(); } catch (err) { setImportError(err.response?.data?.message || "Unable to delete supplier."); } };
+
   const importFile = async () => {
     if (!preview.length) return;
     setBusy(true); setImportError(""); setNotice("");
@@ -102,6 +109,12 @@ function ManufacturerList() {
     </div>
 
     <Card>
+      <SectionHeader title="Manage Suppliers" subtitle="Add a supplier manually or remove an unused supplier record." />
+      <div className="manufacturer-manage-actions"><Button onClick={() => setShowAddForm((value) => !value)} variant="secondary">{showAddForm ? "Close form" : "Add supplier"}</Button></div>
+      {showAddForm && <form className="manufacturer-add-form" onSubmit={addSupplier}>{[["cCode","CCode *"],["ledgerAccount","Supplier / Ledger Name *"],["city","City"],["area","Area"],["state","State"],["pinCode","PIN Code"],["email","Email"],["gstin","GSTIN"],["contactPerson","Contact Person"],["telephone","Telephone"],["mobile","Mobile"],["status","Status"]].map(([key,label]) => <label key={key}>{label}<input required={key === "cCode" || key === "ledgerAccount"} value={supplierForm[key]} onChange={(e) => setSupplierForm((current) => ({ ...current, [key]: e.target.value }))} /></label>)}<div className="manufacturer-form-actions"><Button type="submit" disabled={savingSupplier}>{savingSupplier ? "Saving…" : "Save supplier"}</Button></div></form>}
+    </Card>
+
+    <Card>
       <SectionHeader title="Import Manufacturer List" subtitle="Upload the current CSV. Existing CCode + Ledger Account combinations are skipped; no product or inventory records are created." />
       <div className="manufacturer-import">
         <input id="manufacturer-csv" type="file" accept=".csv,text/csv" onChange={handleFile} />
@@ -118,8 +131,8 @@ function ManufacturerList() {
       <SectionHeader title="Manufacturer Directory" subtitle="Search supplier identity, location, GST and contact details." />
       <div className="manufacturer-search"><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search name, CCode, city, GSTIN, contact, mobile…" /><span>{filtered.length.toLocaleString("en-IN")} records</span></div>
       {loading ? <LoadingSpinner /> : error ? <p className="manufacturer-error">{error}</p> : filtered.length === 0 ? <p className="manufacturer-empty">No manufacturer records found.</p> :
-        <div className="manufacturer-table-wrap"><DataTable><thead><tr><th>CCode</th><th>Ledger Account</th><th>City / Area</th><th>State</th><th>PIN</th><th>GSTIN</th><th>Email</th><th>Contact Person</th><th>Telephone / Mobile</th><th>Status</th></tr></thead><tbody>
-          {filtered.map((item) => <tr key={item._id}><td>{display(item.cCode)}</td><td className="manufacturer-name">{display(item.ledgerAccount)}</td><td>{[item.city, item.area].filter(Boolean).join(" / ") || "—"}</td><td>{display(item.state)}</td><td>{display(item.pinCode)}</td><td>{display(item.gstin)}</td><td>{display(item.email)}</td><td>{display(item.contactPerson)}</td><td>{[item.telephone, item.mobile].filter(Boolean).join(" / ") || "—"}</td><td>{display(item.status)}</td></tr>)}
+        <div className="manufacturer-table-wrap"><DataTable><thead><tr><th>CCode</th><th>Ledger Account</th><th>City / Area</th><th>State</th><th>PIN</th><th>GSTIN</th><th>Email</th><th>Contact Person</th><th>Telephone / Mobile</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+          {filtered.map((item) => <tr key={item._id}><td>{display(item.cCode)}</td><td className="manufacturer-name">{display(item.ledgerAccount)}</td><td>{[item.city, item.area].filter(Boolean).join(" / ") || "—"}</td><td>{display(item.state)}</td><td>{display(item.pinCode)}</td><td>{display(item.gstin)}</td><td>{display(item.email)}</td><td>{display(item.contactPerson)}</td><td>{[item.telephone, item.mobile].filter(Boolean).join(" / ") || "—"}</td><td>{display(item.status)}</td><td><Button size="sm" variant="danger" onClick={() => removeSupplier(item)}>Delete</Button></td></tr>)}
         </tbody></DataTable></div>}
     </Card>
   </div>;
