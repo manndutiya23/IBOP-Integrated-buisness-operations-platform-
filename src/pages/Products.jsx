@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useBusinessData } from "../context/BusinessDataContext";
 import { useAuth } from "../context/AuthContext";
 import { PageHeader, PageSection } from "../components/Ui";
@@ -6,6 +7,7 @@ import { ProductKPIs, ProductToolbar, ProductTable } from "../components/product
 
 function Products() {
   const { products } = useBusinessData();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const role = user?.role;
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,7 +26,7 @@ function Products() {
     <PageHeader eyebrow="Inventory" title="Products" subtitle="View medicine, device and consumable batches currently held in the warehouse." />
     <ProductKPIs products={products} />
     <PageSection title="Inventory" subtitle="Stock enters through verified goods receipts. Corrections require an auditable adjustment with a reason.">
-      <ProductToolbar searchTerm={searchTerm} setSearchTerm={setSearchTerm} statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
+      <ProductToolbar searchTerm={searchTerm} setSearchTerm={setSearchTerm} statusFilter={statusFilter} setStatusFilter={setStatusFilter} onCreatePurchase={() => navigate("/purchases")} />
       <ProductTable products={filteredProducts} role={role} />
     </PageSection>
   </>;
