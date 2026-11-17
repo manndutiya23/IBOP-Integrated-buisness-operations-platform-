@@ -99,7 +99,7 @@ export const deleteProductCatalogueEntry = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!/^[a-f\\d]{24}$/i.test(id)) {
+    if (!/^[a-f\d]{24}$/i.test(id)) {
       return res.status(400).json({ message: "Invalid product catalogue ID." });
     }
 
