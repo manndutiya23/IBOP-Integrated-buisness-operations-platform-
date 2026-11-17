@@ -47,6 +47,8 @@ function HR() {
 
         email: "",
 
+        password: "",
+
         role: "",
 
         department: "",
@@ -79,7 +81,8 @@ function HR() {
         if (
 
             !form.name ||
-
+            !form.email ||
+            !form.password ||
             !form.role ||
 
             !form.department ||
@@ -107,6 +110,8 @@ function HR() {
             name: "",
 
             email: "",
+
+            password: "",
 
             role: "",
 

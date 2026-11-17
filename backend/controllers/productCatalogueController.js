@@ -139,15 +139,26 @@ export const bulkImportProductCatalogue = async (req, res) => {
     const prepared = [];
     let invalid = 0;
     let duplicateInFile = 0;
+    const addRowError = (message) => {
+      if (errors.length < 50) errors.push(message);
+    };
 
     rows.forEach((row, index) => {
+      const rowNumber = index + 2;
+      if (!row || typeof row !== "object" || Array.isArray(row)) {
+        invalid += 1;
+        addRowError(`Row ${rowNumber}: Expected a product record with named fields.`);
+        return;
+      }
+
       const productCode = optionalText(row.productCode);
       const name = optionalText(row.name);
       if (!productCode || !name) {
         invalid += 1;
-        if (errors.length < 20) errors.push(`Row ${index + 2}: Product Code and Product Name are required.`);
+        addRowError(`Row ${rowNumber}: Product Code and Product Name are required.`);
         return;
       }
+
       const key = productCode.toLocaleLowerCase("en");
       if (seen.has(key)) {
         duplicateInFile += 1;
@@ -165,7 +176,7 @@ export const bulkImportProductCatalogue = async (req, res) => {
           textFields.nick.length > 120 || textFields.manufacturerDivision.length > 200 ||
           textFields.productType.length > 100 || textFields.hsnCode.length > 32) {
         invalid += 1;
-        if (errors.length < 20) errors.push(`Row ${index + 2}: One or more fields exceed the allowed length.`);
+        addRowError(`Row ${rowNumber}: One or more fields exceed the allowed length.`);
         return;
       }
 
@@ -183,17 +194,20 @@ export const bulkImportProductCatalogue = async (req, res) => {
       }
       if (rateInvalid) {
         invalid += 1;
-        if (errors.length < 20) errors.push(`Row ${index + 2}: GST rates must be numeric values between 0 and 100.`);
+        addRowError(`Row ${rowNumber}: GST rates must be numeric values between 0 and 100.`);
         return;
       }
 
       prepared.push({
-        productCode, name, ...textFields, ...rates,
-        source: "Product Manufacturer List",
+        rowNumber,
+        product: {
+          productCode, name, ...textFields, ...rates,
+          source: "Product Manufacturer List",
+        },
       });
     });
 
-    const codes = prepared.map((item) => item.productCode);
+    const codes = prepared.map((item) => item.product.productCode);
     const existing = codes.length
       ? await ProductCatalogue.find({ productCode: { $in: codes } })
           .collation({ locale: "en", strength: 2 })
@@ -201,35 +215,68 @@ export const bulkImportProductCatalogue = async (req, res) => {
           .lean()
       : [];
     const existingCodes = new Set(existing.map((item) => item.productCode.toLocaleLowerCase("en")));
-    const toInsert = prepared.filter((item) => !existingCodes.has(item.productCode.toLocaleLowerCase("en")));
+    const toInsert = prepared.filter((item) => !existingCodes.has(item.product.productCode.toLocaleLowerCase("en")));
     const skippedExisting = prepared.length - toInsert.length;
 
     let inserted = 0;
+    let failedDatabaseWrites = 0;
     if (toInsert.length) {
-      const result = await ProductCatalogue.insertMany(toInsert, { ordered: false });
-      inserted = result.length;
+      try {
+        const result = await ProductCatalogue.insertMany(
+          toInsert.map((item) => item.product),
+          { ordered: false }
+        );
+        inserted = result.length;
+      } catch (error) {
+        if (!Array.isArray(error.writeErrors)) throw error;
+
+        const failedIndexes = new Set();
+        error.writeErrors.forEach((writeError) => {
+          const index = Number(writeError.index);
+          if (Number.isInteger(index) && index >= 0 && index < toInsert.length) {
+            failedIndexes.add(index);
+            const failedRow = toInsert[index];
+            addRowError(
+              `Row ${failedRow.rowNumber} (${failedRow.product.productCode}): ${writeError.errmsg || "Database rejected this record."}`
+            );
+          } else {
+            addRowError(writeError.errmsg || "A database write failed for an unidentified row.");
+          }
+        });
+
+        failedDatabaseWrites = error.writeErrors.length;
+        // With unordered insertMany, each indexed write error identifies a failed
+        // row; all remaining rows in the batch were inserted successfully.
+        if (failedIndexes.size === failedDatabaseWrites) {
+          inserted = toInsert.length - failedIndexes.size;
+        } else if (Number.isInteger(error.result?.insertedCount)) {
+          inserted = error.result.insertedCount;
+        } else if (Array.isArray(error.insertedDocs)) {
+          inserted = error.insertedDocs.length;
+        } else {
+          inserted = null;
+        }
+      }
     }
 
-    return res.status(200).json({
-      message: "Product catalogue import completed. Warehouse inventory was not changed.",
-      summary: {
-        received: rows.length,
-        inserted,
-        skippedExisting,
-        skippedDuplicateInFile: duplicateInFile,
-        skippedInvalid: invalid,
-      },
+    const summary = {
+      received: rows.length,
+      inserted,
+      skippedExisting,
+      skippedDuplicateInFile: duplicateInFile,
+      skippedInvalid: invalid,
+      failedDatabaseWrites,
+    };
+
+    const hasIssues = invalid > 0 || duplicateInFile > 0 || failedDatabaseWrites > 0;
+    return res.status(failedDatabaseWrites > 0 ? 207 : 200).json({
+      message: hasIssues
+        ? "Product catalogue import completed with skipped or failed rows. Review the summary and row errors before retrying."
+        : "Product catalogue import completed. Warehouse inventory was not changed.",
+      summary,
       errors,
     });
   } catch (error) {
-    if (error.writeErrors) {
-      console.error("BULK PRODUCT CATALOGUE PARTIAL IMPORT ERROR:", error);
-      return res.status(207).json({
-        message: "Import completed with some database write conflicts. Review the catalogue before retrying.",
-        inserted: error.result?.insertedCount || 0,
-        errors: error.writeErrors.slice(0, 20).map((item) => item.errmsg || "Duplicate product code."),
-      });
-    }
     console.error("BULK IMPORT PRODUCT CATALOGUE ERROR:", error);
     return res.status(500).json({ message: "Unable to import the product catalogue." });
   }
