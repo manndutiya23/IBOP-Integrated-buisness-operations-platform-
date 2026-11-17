@@ -99,7 +99,7 @@ export const deleteProductCatalogueEntry = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!/^[a-f\\d]{24}$/i.test(id)) {
+    if (!/^[a-f\d]{24}$/i.test(id)) {
       return res.status(400).json({ message: "Invalid product catalogue ID." });
     }
 
@@ -116,5 +116,121 @@ export const deleteProductCatalogueEntry = async (req, res) => {
   } catch (error) {
     console.error("DELETE PRODUCT CATALOGUE ERROR:", error);
     return res.status(500).json({ message: "Unable to delete product from the catalogue." });
+  }
+};
+
+
+/**
+ * Import the approved product master in bulk.
+ * Existing Product Codes are skipped; this endpoint never creates warehouse stock.
+ */
+export const bulkImportProductCatalogue = async (req, res) => {
+  try {
+    const rows = req.body?.products;
+    if (!Array.isArray(rows) || rows.length === 0) {
+      return res.status(400).json({ message: "Upload a CSV containing product records." });
+    }
+    if (rows.length > 10000) {
+      return res.status(413).json({ message: "A maximum of 10,000 product rows can be imported at once." });
+    }
+
+    const errors = [];
+    const seen = new Set();
+    const prepared = [];
+    let invalid = 0;
+    let duplicateInFile = 0;
+
+    rows.forEach((row, index) => {
+      const productCode = optionalText(row.productCode);
+      const name = optionalText(row.name);
+      if (!productCode || !name) {
+        invalid += 1;
+        if (errors.length < 20) errors.push(`Row ${index + 2}: Product Code and Product Name are required.`);
+        return;
+      }
+      const key = productCode.toLocaleLowerCase("en");
+      if (seen.has(key)) {
+        duplicateInFile += 1;
+        return;
+      }
+      seen.add(key);
+
+      const textFields = {
+        nick: optionalText(row.nick),
+        manufacturerDivision: optionalText(row.manufacturerDivision),
+        productType: optionalText(row.productType),
+        hsnCode: optionalText(row.hsnCode),
+      };
+      if (productCode.length > 64 || name.length > 200 ||
+          textFields.nick.length > 120 || textFields.manufacturerDivision.length > 200 ||
+          textFields.productType.length > 100 || textFields.hsnCode.length > 32) {
+        invalid += 1;
+        if (errors.length < 20) errors.push(`Row ${index + 2}: One or more fields exceed the allowed length.`);
+        return;
+      }
+
+      const rates = {};
+      let rateInvalid = false;
+      for (const [field, label] of [["igstRate", "IGST"], ["cgstRate", "CGST"], ["sgstRate", "SGST"]]) {
+        const raw = row[field];
+        if (raw === "" || raw === null || raw === undefined) {
+          rates[field] = null;
+        } else {
+          const value = Number(raw);
+          if (!Number.isFinite(value) || value < 0 || value > 100) rateInvalid = true;
+          else rates[field] = value;
+        }
+      }
+      if (rateInvalid) {
+        invalid += 1;
+        if (errors.length < 20) errors.push(`Row ${index + 2}: GST rates must be numeric values between 0 and 100.`);
+        return;
+      }
+
+      prepared.push({
+        productCode, name, ...textFields, ...rates,
+        source: "Product Manufacturer List",
+      });
+    });
+
+    const codes = prepared.map((item) => item.productCode);
+    const existing = codes.length
+      ? await ProductCatalogue.find({ productCode: { $in: codes } })
+          .collation({ locale: "en", strength: 2 })
+          .select("productCode")
+          .lean()
+      : [];
+    const existingCodes = new Set(existing.map((item) => item.productCode.toLocaleLowerCase("en")));
+    const toInsert = prepared.filter((item) => !existingCodes.has(item.productCode.toLocaleLowerCase("en")));
+    const skippedExisting = prepared.length - toInsert.length;
+
+    let inserted = 0;
+    if (toInsert.length) {
+      const result = await ProductCatalogue.insertMany(toInsert, { ordered: false });
+      inserted = result.length;
+    }
+
+    return res.status(200).json({
+      message: "Product catalogue import completed. Warehouse inventory was not changed.",
+      summary: {
+        received: rows.length,
+        inserted,
+        skippedExisting,
+        skippedDuplicateInFile: duplicateInFile,
+        skippedInvalid: invalid,
+      },
+      errors,
+    });
+  } catch (error) {
+    if (error.writeErrors) {
+      console.error("BULK PRODUCT CATALOGUE PARTIAL IMPORT ERROR:", error);
+      return res.status(207).json({
+        message: "Import completed with some database write conflicts. Review the catalogue before retrying.",
+        inserted: error.result?.insertedCount || 0,
+        errors: error.writeErrors.slice(0, 20).map((item) => item.errmsg || "Duplicate product code."),
+      });
+    }
+    console.error("BULK IMPORT PRODUCT CATALOGUE ERROR:", error);
+    return res.status(500).json({ message: "Unable to import the product catalogue." });
   }
 };
