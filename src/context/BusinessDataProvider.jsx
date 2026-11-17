@@ -13,7 +13,8 @@ export function BusinessDataProvider({ children }) {
   const createSale = async (data) => { const r = await API.post("/sales", data); setSales((p) => [...p, r.data]); };
   const addProduct = (p) => setProducts((current) => [...current, { id: Date.now(), ...p }]);
   const createPurchase = async (data) => { const r = await API.post("/purchases", data); await fetchPurchases(); return r.data; };
-  const receivePurchase = async (id, items) => { const r = await API.post(`/purchases/${id}/receive`, { items }); await Promise.all([fetchPurchases(), fetchProducts()]); return r.data; };
+  const receivePurchase = async (id, items) => { const r = await API.post(`/purchases/${id}/receive`, { items }); await Promise.all([fetchPurchases(), fetchProducts(), fetchExpenses()]); return r.data; };
+  const deletePurchase = async (id) => { const r = await API.delete(`/purchases/${id}`); await fetchPurchases(); return r.data; };
   const deleteProduct = async (id) => { try { const p = products.find((x) => x._id === id); if (!p) return; await API.delete(`/products/${p._id || id}`); setProducts((current) => current.filter((x) => x._id !== id && x._id !== p._id)); } catch (e) { console.error("Failed to delete product:", e); } };
   const deleteSale = async (id) => { try { await API.delete(`/sales/${id}`); setSales((current) => current.filter((s) => s._id !== id)); } catch (e) { console.error("Failed to delete sale:", e); } };
   const addExpense = async (data) => { try { const r = await API.post("/expenses", data); setExpenses((p) => [...p, r.data]); } catch (e) { console.error(e); } };
@@ -24,5 +25,5 @@ export function BusinessDataProvider({ children }) {
   const toggleInvoiceStatus = async (id) => { try { await API.patch(`/invoices/${id}/status`); fetchInvoices(); } catch (e) { console.error("TOGGLE STATUS ERROR:", e); } };
   const addEmployee = async (data) => { try { const r = await API.post("/employees", data); setEmployees((p) => [r.data?.employee ?? r.data, ...p]); } catch (e) { console.error("ADD EMPLOYEE ERROR:", e); } };
   const deleteEmployee = async (id) => { try { await API.delete(`/employees/${id}`); setEmployees((p) => p.filter((e) => e._id !== id)); } catch (e) { console.error("DELETE EMPLOYEE ERROR:", e); } };
-  return <BusinessDataContext.Provider value={{ products, sales, expenses, addProduct, createSale, deleteProduct, deleteSale, addExpense, deleteExpense, totalProducts, totalSales, totalRevenue, totalExpenses, profit, lowStockProducts, updateProduct, invoices, setInvoices, createInvoice, toggleInvoiceStatus, employees, setEmployees, addEmployee, deleteEmployee, purchases, createPurchase, receivePurchase }}>{children}</BusinessDataContext.Provider>;
+  return <BusinessDataContext.Provider value={{ products, sales, expenses, addProduct, createSale, deleteProduct, deleteSale, addExpense, deleteExpense, totalProducts, totalSales, totalRevenue, totalExpenses, profit, lowStockProducts, updateProduct, invoices, setInvoices, createInvoice, toggleInvoiceStatus, employees, setEmployees, addEmployee, deleteEmployee, purchases, createPurchase, receivePurchase, deletePurchase }}>{children}</BusinessDataContext.Provider>;
 }
