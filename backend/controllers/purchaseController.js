@@ -90,25 +90,48 @@ export const receivePurchaseItems = async (req, res) => {
 };
 
 export const deletePurchase = async (req, res) => {
+  const session = await mongoose.startSession();
   try {
     if (!validId(req.params.id)) return res.status(400).json({ message: "Invalid purchase invoice ID." });
+    let deletedPurchase;
+    let deletedInventoryCount = 0;
+    let deletedExpenseCount = 0;
 
-    // Only orders with no goods-receipt history can be deleted. Once stock or
-    // Finance has been posted, the invoice must remain as an audit record.
-    const deletedPurchase = await Purchase.findOneAndDelete({
-      _id: req.params.id,
-      receipts: { $size: 0 },
+    await session.withTransaction(async () => {
+      const purchase = await Purchase.findById(req.params.id).session(session);
+      if (!purchase) {
+        const error = new Error("Purchase invoice not found.");
+        error.status = 404;
+        throw error;
+      }
+
+      // Reverse only inventory records explicitly created by this purchase's
+      // goods receipts. Do not touch unrelated stock records.
+      const inventoryIds = (purchase.receipts || []).flatMap((receipt) =>
+        (receipt.lines || []).map((line) => line.inventoryProductId).filter(Boolean)
+      );
+      if (inventoryIds.length) {
+        const inventoryResult = await Product.deleteMany({ _id: { $in: inventoryIds } }).session(session);
+        deletedInventoryCount = inventoryResult.deletedCount || 0;
+      }
+
+      const expenseResult = await Expense.deleteMany({ purchaseId: purchase._id }).session(session);
+      deletedExpenseCount = expenseResult.deletedCount || 0;
+
+      await Purchase.deleteOne({ _id: purchase._id }).session(session);
+      deletedPurchase = purchase;
     });
 
-    if (!deletedPurchase) {
-      const existing = await Purchase.findById(req.params.id).select("_id receipts");
-      if (!existing) return res.status(404).json({ message: "Purchase invoice not found." });
-      return res.status(409).json({ message: "This invoice has a goods-receipt record and cannot be deleted. Keep it for inventory and Finance audit history." });
-    }
-
-    return res.status(200).json({ message: "Purchase invoice deleted.", purchaseId: deletedPurchase._id });
+    return res.status(200).json({
+      message: "Purchase invoice and its linked test data were deleted.",
+      purchaseId: deletedPurchase._id,
+      deletedInventoryRecords: deletedInventoryCount,
+      deletedFinanceExpenses: deletedExpenseCount,
+    });
   } catch (error) {
     console.error("DELETE PURCHASE ERROR:", error);
-    return res.status(500).json({ message: "Failed to delete purchase invoice." });
+    return res.status(error.status || 500).json({ message: error.message || "Failed to delete purchase invoice." });
+  } finally {
+    await session.endSession();
   }
 };
