@@ -111,6 +111,8 @@ function HR() {
 
             email: "",
 
+            password: "",
+
             role: "",
 
             department: "",
