@@ -96,6 +96,11 @@ function EmployeeForm({
 
                     </div>
 
+                    <div className="ibop-input-group">
+                        <label>Initial Password (minimum 12 characters)</label>
+                        <Input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Set a strong initial password" required minLength={12} autoComplete="new-password" />
+                    </div>
+
                     <div className="ibop-select-group">
 
                         <label>
