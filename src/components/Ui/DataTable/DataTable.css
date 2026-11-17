@@ -104,11 +104,7 @@
 
 .datatable__table td:has(.ui-button){
 
-    display:flex;
-
-    gap:10px;
-
-    align-items:center;
+    white-space:nowrap;
 
 }
 
