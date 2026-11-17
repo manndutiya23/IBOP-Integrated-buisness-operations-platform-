@@ -1,4 +1,4 @@
-import rateLimit, { ipKeyGenerator } from "express-rate-limit";
+import rateLimit from "express-rate-limit";
 
 const apiLimitMessage = {
   message: "Too many requests. Please wait a while and try again.",
@@ -13,8 +13,8 @@ export const apiLimiter = rateLimit({
   handler: (req, res) => res.status(429).json(apiLimitMessage),
 });
 
-// Keyed by account and client IP, so employees sharing office Wi-Fi
-// do not consume one another's failed-login allowance.
+// Login attempts are limited per normalized email address. This avoids
+// locking out colleagues who share the same office Wi-Fi IP address.
 export const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10,
@@ -24,7 +24,7 @@ export const loginLimiter = rateLimit({
     const email = typeof req.body?.email === "string"
       ? req.body.email.trim().toLowerCase()
       : "missing-email";
-    return `${ipKeyGenerator(req.ip)}:${email}`;
+    return email;
   },
   handler: (req, res) => res.status(429).json({
     message: "Too many login attempts for this account. Please try again in 15 minutes.",
