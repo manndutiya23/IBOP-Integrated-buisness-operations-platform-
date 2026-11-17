@@ -4,6 +4,9 @@ import Product from "../models/Product.js";
 import ProductCatalogue from "../models/ProductCatalogue.js";
 import Expense from "../models/Expense.js";
 import Manufacturer from "../models/Manufacturer.js";
+import Counter from "../models/Counter.js";
+
+const roundCurrency = (value) => Number(value.toFixed(2));
 const validId = (value) => mongoose.isValidObjectId(value);
 
 export const createPurchase = async (req, res) => {
@@ -18,14 +21,60 @@ export const createPurchase = async (req, res) => {
     for (const item of items) {
       if (!validId(item?.productCatalogueId)) return res.status(400).json({ message: "Every purchase line must reference a valid catalogue product." });
       const quantity = Number(item.quantity), purchasePrice = Number(item.purchasePrice), gst = Number(item.gst ?? 0);
-      if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > 1000000 || !Number.isFinite(purchasePrice) || purchasePrice < 0 || purchasePrice > 100000000 || !Number.isFinite(gst) || gst < 0 || gst > 100) return res.status(400).json({ message: "Check quantity, purchase price and GST on every line." });
+      if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > 1000000 ||
+          !Number.isFinite(purchasePrice) || purchasePrice < 0 || purchasePrice > 100000000 ||
+          !Number.isFinite(gst) || gst < 0 || gst > 100 ||
+          (typeof item.purchasePrice === "number" && !Number.isInteger(item.purchasePrice * 100)) ||
+          (typeof item.purchasePrice === "string" && !/^\\d+(?:\\.\\d{1,2})?$/.test(item.purchasePrice.trim()))) {
+        return res.status(400).json({ message: "Check quantity, purchase price (maximum 2 decimal places) and GST on every line." });
+      }
       const catalogueProduct = await ProductCatalogue.findById(item.productCatalogueId).select("productCode name");
       if (!catalogueProduct) return res.status(400).json({ message: "A selected product no longer exists in the Product List. Refresh and try again." });
       prepared.push({ productCatalogueId: catalogueProduct._id, productCode: catalogueProduct.productCode, productName: catalogueProduct.name, quantity, purchasePrice, gst });
     }
-    const subtotal = prepared.reduce((sum, item) => sum + item.quantity * item.purchasePrice, 0);
-    const gstAmount = prepared.reduce((sum, item) => sum + item.quantity * item.purchasePrice * item.gst / 100, 0);
-    const purchase = await Purchase.create({ invoiceNumber: `PO-${Date.now()}`, supplierId: supplier._id, supplierName, items: prepared, subtotal, gstAmount, finalAmount: subtotal + gstAmount, date: date ? new Date(date) : new Date(), status: "Pending" });
+    // Round each line's taxable value and GST to paise before aggregation.
+    const lineTotals = prepared.map((item) => {
+      const lineSubtotal = roundCurrency(item.quantity * item.purchasePrice);
+      const lineGst = roundCurrency(lineSubtotal * item.gst / 100);
+      return { lineSubtotal, lineGst };
+    });
+    const subtotal = roundCurrency(lineTotals.reduce((sum, line) => sum + line.lineSubtotal, 0));
+    const gstAmount = roundCurrency(lineTotals.reduce((sum, line) => sum + line.lineGst, 0));
+    const finalAmount = roundCurrency(subtotal + gstAmount);
+    if (![subtotal, gstAmount, finalAmount].every(Number.isFinite)) {
+      return res.status(400).json({ message: "Purchase totals exceed the supported amount range." });
+    }
+
+    let purchaseDate = new Date();
+    if (date !== undefined && date !== null && date !== "") {
+      if (typeof date !== "string" || Number.isNaN(Date.parse(date))) {
+        return res.status(400).json({ message: "Enter a valid purchase date." });
+      }
+      purchaseDate = new Date(date);
+      if (Number.isNaN(purchaseDate.getTime())) {
+        return res.status(400).json({ message: "Enter a valid purchase date." });
+      }
+    }
+
+    // MongoDB atomically increments this sequence, preventing invoice-number
+    // collisions when multiple purchase orders are created concurrently.
+    const counter = await Counter.findOneAndUpdate(
+      { _id: "purchaseInvoice" },
+      { $inc: { sequence: 1 } },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
+    const invoiceNumber = `PO-${String(counter.sequence).padStart(6, "0")}`;
+    const purchase = await Purchase.create({
+      invoiceNumber,
+      supplierId: supplier._id,
+      supplierName,
+      items: prepared,
+      subtotal,
+      gstAmount,
+      finalAmount,
+      date: purchaseDate,
+      status: "Pending",
+    });
     return res.status(201).json({ message: "Purchase order created. Inventory and Finance were not changed.", purchase });
   } catch (error) {
     console.error("CREATE PURCHASE ERROR:", error);
@@ -131,8 +180,8 @@ export const receivePurchaseItems = async (req, res) => {
           throw error;
         }
 
-        const lineSubtotal = quantity * line.purchasePrice;
-        const lineGst = lineSubtotal * line.gst / 100;
+        const lineSubtotal = roundCurrency(quantity * line.purchasePrice);
+        const lineGst = roundCurrency(lineSubtotal * line.gst / 100);
         if (!Number.isFinite(lineSubtotal) || !Number.isFinite(lineGst)) {
           const error = new Error("Receipt totals exceed the supported amount range.");
           error.status = 400;
@@ -161,7 +210,7 @@ export const receivePurchaseItems = async (req, res) => {
         });
       }
 
-      const expenseAmount = receivedSubtotal + receivedGst;
+      const expenseAmount = roundCurrency(receivedSubtotal + receivedGst);
       if (!Number.isFinite(expenseAmount)) {
         const error = new Error("Receipt total exceeds the supported amount range.");
         error.status = 400;
