@@ -3,12 +3,16 @@ import Purchase from "../models/Purchase.js";
 import Product from "../models/Product.js";
 import ProductCatalogue from "../models/ProductCatalogue.js";
 import Expense from "../models/Expense.js";
+import Manufacturer from "../models/Manufacturer.js";
 const validId = (value) => mongoose.isValidObjectId(value);
 
 export const createPurchase = async (req, res) => {
   try {
-    const { supplierName, items, date } = req.body;
-    if (typeof supplierName !== "string" || !supplierName.trim() || supplierName.trim().length > 200) return res.status(400).json({ message: "A valid supplier name is required." });
+    const { supplierId, items, date } = req.body;
+    if (!validId(supplierId)) return res.status(400).json({ message: "Select a valid supplier from the Manufacturer List." });
+    const supplier = await Manufacturer.findById(supplierId).select("ledgerAccount");
+    if (!supplier) return res.status(400).json({ message: "Selected supplier no longer exists. Refresh the Manufacturer List and try again." });
+    const supplierName = supplier.ledgerAccount;
     if (!Array.isArray(items) || items.length === 0 || items.length > 100) return res.status(400).json({ message: "Add between 1 and 100 catalogue products." });
     const prepared = [];
     for (const item of items) {
@@ -21,7 +25,7 @@ export const createPurchase = async (req, res) => {
     }
     const subtotal = prepared.reduce((sum, item) => sum + item.quantity * item.purchasePrice, 0);
     const gstAmount = prepared.reduce((sum, item) => sum + item.quantity * item.purchasePrice * item.gst / 100, 0);
-    const purchase = await Purchase.create({ invoiceNumber: `PO-${Date.now()}`, supplierName: supplierName.trim(), items: prepared, subtotal, gstAmount, finalAmount: subtotal + gstAmount, date: date ? new Date(date) : new Date(), status: "Pending" });
+    const purchase = await Purchase.create({ invoiceNumber: `PO-${Date.now()}`, supplierId: supplier._id, supplierName, items: prepared, subtotal, gstAmount, finalAmount: subtotal + gstAmount, date: date ? new Date(date) : new Date(), status: "Pending" });
     return res.status(201).json({ message: "Purchase order created. Inventory and Finance were not changed.", purchase });
   } catch (error) {
     console.error("CREATE PURCHASE ERROR:", error);
