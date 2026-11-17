@@ -31,7 +31,7 @@ export const createManufacturer = async (req, res) => {
 
 export const deleteManufacturer = async (req, res) => {
   try {
-    if (!/^[a-f\\d]{24}$/i.test(req.params.id)) return res.status(400).json({ message: "Invalid supplier ID." });
+    if (!/^[a-f\d]{24}$/i.test(req.params.id)) return res.status(400).json({ message: "Invalid supplier ID." });
     const linkedPurchase = await Purchase.findOne({ supplierId: req.params.id }).select("_id invoiceNumber").lean();
     if (linkedPurchase) return res.status(409).json({ message: "This supplier is linked to purchase invoices and cannot be deleted." });
     const deleted = await Manufacturer.findByIdAndDelete(req.params.id);
