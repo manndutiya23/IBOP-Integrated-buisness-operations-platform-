@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Purchase from "../models/Purchase.js";
 import Product from "../models/Product.js";
 import ProductCatalogue from "../models/ProductCatalogue.js";
+import Expense from "../models/Expense.js";
 const validId = (value) => mongoose.isValidObjectId(value);
 
 export const createPurchase = async (req, res) => {
@@ -21,7 +22,7 @@ export const createPurchase = async (req, res) => {
     const subtotal = prepared.reduce((sum, item) => sum + item.quantity * item.purchasePrice, 0);
     const gstAmount = prepared.reduce((sum, item) => sum + item.quantity * item.purchasePrice * item.gst / 100, 0);
     const purchase = await Purchase.create({ invoiceNumber: `PO-${Date.now()}`, supplierName: supplierName.trim(), items: prepared, subtotal, gstAmount, finalAmount: subtotal + gstAmount, date: date ? new Date(date) : new Date(), status: "Pending" });
-    return res.status(201).json({ message: "Purchase order created. Inventory was not changed.", purchase });
+    return res.status(201).json({ message: "Purchase order created. Inventory and Finance were not changed.", purchase });
   } catch (error) {
     console.error("CREATE PURCHASE ERROR:", error);
     return res.status(500).json({ message: "Failed to create purchase." });
@@ -44,17 +45,21 @@ export const receivePurchaseItems = async (req, res) => {
   try {
     const { id } = req.params, { items } = req.body;
     if (!validId(id) || !Array.isArray(items) || items.length === 0) return res.status(400).json({ message: "Select at least one valid purchase line to receive." });
-    let updatedPurchase;
+    let updatedPurchase, createdExpense;
     await session.withTransaction(async () => {
       const purchase = await Purchase.findById(id).session(session);
       if (!purchase) { const error = new Error("Purchase invoice not found."); error.status = 404; throw error; }
       const receiptLines = [];
+      let receivedSubtotal = 0, receivedGst = 0;
       for (const received of items) {
         const line = purchase.items.id(received.purchaseItemId), quantity = Number(received.quantity);
         if (!line || !Number.isSafeInteger(quantity) || quantity < 1 || line.receivedQuantity + quantity > line.quantity) { const error = new Error("Received quantity must be positive and cannot exceed the outstanding quantity."); error.status = 400; throw error; }
         const batchNumber = typeof received.batchNumber === "string" ? received.batchNumber.trim() : "";
         const expiryDate = received.expiryDate ? new Date(received.expiryDate) : null;
         if (expiryDate && Number.isNaN(expiryDate.getTime())) { const error = new Error("Enter a valid expiry date."); error.status = 400; throw error; }
+        const lineSubtotal = quantity * line.purchasePrice;
+        receivedSubtotal += lineSubtotal;
+        receivedGst += lineSubtotal * line.gst / 100;
         const inventoryProduct = await Product.create([{ name: line.productName, price: line.purchasePrice, stock: quantity, batchNumber, expiryDate, productCatalogueId: line.productCatalogueId, productCode: line.productCode }], { session });
         line.receivedQuantity += quantity;
         receiptLines.push({ purchaseItemId: line._id, quantity, batchNumber, expiryDate, inventoryProductId: inventoryProduct[0]._id });
@@ -64,9 +69,20 @@ export const receivePurchaseItems = async (req, res) => {
       purchase.status = allReceived ? "Received" : anyReceived ? "Partially Received" : "Pending";
       purchase.receipts.push({ receivedBy: req.employee?._id, lines: receiptLines });
       await purchase.save({ session });
+      const receiptId = purchase.receipts[purchase.receipts.length - 1]._id;
+      const [expense] = await Expense.create([{
+        title: `Goods received - ${purchase.invoiceNumber} - ${purchase.supplierName}`,
+        amount: receivedSubtotal + receivedGst,
+        category: "Purchase",
+        date: new Date(),
+        purchaseId: purchase._id,
+        receiptId,
+        supplierName: purchase.supplierName,
+      }], { session });
+      createdExpense = expense;
       updatedPurchase = purchase;
     });
-    return res.status(200).json({ message: "Verified goods receipt recorded and inventory updated.", purchase: updatedPurchase });
+    return res.status(200).json({ message: "Verified goods receipt recorded, inventory updated and Finance expense posted.", purchase: updatedPurchase, expense: createdExpense });
   } catch (error) {
     console.error("RECEIVE PURCHASE ERROR:", error);
     return res.status(error.status || 500).json({ message: error.message || "Failed to record goods receipt." });
