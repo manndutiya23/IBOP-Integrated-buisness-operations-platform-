@@ -10,15 +10,16 @@ const emptyLine = () => ({ productCatalogueId: "", quantity: "1", purchasePrice:
 function Purchases() {
   const { purchases, createPurchase } = useBusinessData();
   const [catalogue, setCatalogue] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
   const [supplierName, setSupplierName] = useState("");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [lines, setLines] = useState([emptyLine()]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    API.get("/product-catalogue")
-      .then((response) => setCatalogue(response.data))
-      .catch((error) => console.error("PRODUCT LIST LOAD ERROR:", error));
+    Promise.all([API.get("/product-catalogue"), API.get("/manufacturers")])
+      .then(([catalogueResponse, supplierResponse]) => { setCatalogue(catalogueResponse.data); setSuppliers(supplierResponse.data); })
+      .catch((error) => console.error("PURCHASE FORM DATA LOAD ERROR:", error));
   }, []);
 
   const totalSpend = useMemo(
@@ -36,7 +37,7 @@ function Purchases() {
     setLoading(true);
     try {
       await createPurchase({
-        supplierName,
+        supplierId: supplierName,
         date,
         items: lines.map((line) => ({
           ...line,
@@ -69,6 +70,7 @@ function Purchases() {
     />
     <PurchaseForm
       catalogue={catalogue}
+      suppliers={suppliers}
       supplierName={supplierName}
       setSupplierName={setSupplierName}
       date={date}
