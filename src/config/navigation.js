@@ -13,6 +13,7 @@ export const navigationSections = [
   ] },
   { kind: "module", title: "Supply Chain", roles: ["Supply Chain", "Management", "Admin"], items: [
     { label: "Product List", path: "/product-list", roles: ["Supply Chain", "Management", "Admin"] },
+    { label: "Manufacturer List", path: "/manufacturers", roles: ["Supply Chain", "Management", "Admin"] },
     { label: "Inventory", path: "/products", roles: ["Supply Chain", "Management", "Admin"] },
     { label: "Create Purchase", path: "/purchases", roles: ["Supply Chain", "Management", "Admin"] },
     { label: "Purchase Invoices", path: "/purchase-invoices", roles: ["Supply Chain", "Management", "Admin"] },
