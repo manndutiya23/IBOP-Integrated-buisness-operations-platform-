@@ -22,12 +22,12 @@ const parseCsv = (text) => {
   for(let i=0;i<text.length;i+=1){const ch=text[i];
     if(ch==='"'){if(quoted&&text[i+1]==='"'){value+='"';i+=1;}else quoted=!quoted;}
     else if(ch===","&&!quoted){row.push(value);value="";}
-    else if((ch==="\\n"||ch==="\\r")&&!quoted){if(ch==="\\r"&&text[i+1]==="\\n")i+=1;row.push(value);value="";if(row.some(v=>v.trim()))rows.push(row);row=[];}
+    else if((ch==="\n"||ch==="\r")&&!quoted){if(ch==="\r"&&text[i+1]==="\n")i+=1;row.push(value);value="";if(row.some(v=>v.trim()))rows.push(row);row=[];}
     else value+=ch;
   }
   row.push(value);if(row.some(v=>v.trim()))rows.push(row);return rows;
 };
-const normalizeHeader=(header)=>header.replace(/^\\uFEFF/,"").trim().toLowerCase().replace(/\\s+/g," ");
+const normalizeHeader=(header)=>header.replace(/^\uFEFF/,"").trim().toLowerCase().replace(/\s+/g," ");
 
 const displayValue = (value) =>
   value === null || value === undefined || value === "" ? "—" : value;
@@ -160,7 +160,7 @@ function ProductList() {
     const file=event.target.files?.[0];setBulkFile(file||null);setBulkRows([]);setBulkError("");if(!file)return;
     if(!file.name.toLowerCase().endsWith(".csv")){setBulkError("Please select a CSV exported from the Product Manufacturer List.");return;}
     try{
-      const rows=parseCsv((await file.text()).replace(/^\\uFEFF/,""));if(rows.length<2)throw new Error("CSV must contain headers and at least one product row.");
+      const rows=parseCsv((await file.text()).replace(/^\uFEFF/,""));if(rows.length<2)throw new Error("CSV must contain headers and at least one product row.");
       const h=rows[0].map(normalizeHeader), ix={productCode:h.indexOf("product code"),name:h.indexOf("product name"),nick:h.indexOf("nick"),manufacturerDivision:h.indexOf("manufacturer / division"),productType:h.indexOf("type"),igstRate:h.indexOf("igst%"),cgstRate:h.indexOf("cgst/cst%"),sgstRate:h.indexOf("sgst/vat%"),hsnCode:h.indexOf("hsn code")};
       if(ix.productCode<0||ix.name<0)throw new Error("Required columns Product Code and Product Name were not found. Use the original Product Manufacturer List headers.");
       const parsed=rows.slice(1).map(c=>{const get=k=>ix[k]<0?"":(c[ix[k]]||"").trim();return{productCode:get("productCode"),name:get("name"),nick:get("nick"),manufacturerDivision:get("manufacturerDivision"),productType:get("productType"),igstRate:get("igstRate"),cgstRate:get("cgstRate"),sgstRate:get("sgstRate"),hsnCode:get("hsnCode")};}).filter(p=>p.productCode||p.name);
@@ -179,7 +179,7 @@ function ProductList() {
 
   const handleDeleteProduct = async (product) => {
     const confirmed = window.confirm(
-      `Delete "${product.name}" (Product Code: ${product.productCode}) from the product catalogue?\\n\\nThis action cannot be undone. It will not change warehouse inventory or existing stock records.`
+      `Delete "${product.name}" (Product Code: ${product.productCode}) from the product catalogue?\n\nThis action cannot be undone. It will not change warehouse inventory or existing stock records.`
     );
 
     if (!confirmed) return;
