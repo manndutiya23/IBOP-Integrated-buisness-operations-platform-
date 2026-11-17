@@ -25,7 +25,7 @@ export const createPurchase = async (req, res) => {
           !Number.isFinite(purchasePrice) || purchasePrice < 0 || purchasePrice > 100000000 ||
           !Number.isFinite(gst) || gst < 0 || gst > 100 ||
           (typeof item.purchasePrice === "number" && !Number.isInteger(item.purchasePrice * 100)) ||
-          (typeof item.purchasePrice === "string" && !/^\\d+(?:\\.\\d{1,2})?$/.test(item.purchasePrice.trim()))) {
+          (typeof item.purchasePrice === "string" && !/^\d+(?:\.\d{1,2})?$/.test(item.purchasePrice.trim()))) {
         return res.status(400).json({ message: "Check quantity, purchase price (maximum 2 decimal places) and GST on every line." });
       }
       const catalogueProduct = await ProductCatalogue.findById(item.productCatalogueId).select("productCode name");
