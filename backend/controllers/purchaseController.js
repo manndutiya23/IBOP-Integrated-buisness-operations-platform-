@@ -88,3 +88,27 @@ export const receivePurchaseItems = async (req, res) => {
     return res.status(error.status || 500).json({ message: error.message || "Failed to record goods receipt." });
   } finally { await session.endSession(); }
 };
+
+export const deletePurchase = async (req, res) => {
+  try {
+    if (!validId(req.params.id)) return res.status(400).json({ message: "Invalid purchase invoice ID." });
+
+    // Only orders with no goods-receipt history can be deleted. Once stock or
+    // Finance has been posted, the invoice must remain as an audit record.
+    const deletedPurchase = await Purchase.findOneAndDelete({
+      _id: req.params.id,
+      receipts: { $size: 0 },
+    });
+
+    if (!deletedPurchase) {
+      const existing = await Purchase.findById(req.params.id).select("_id receipts");
+      if (!existing) return res.status(404).json({ message: "Purchase invoice not found." });
+      return res.status(409).json({ message: "This invoice has a goods-receipt record and cannot be deleted. Keep it for inventory and Finance audit history." });
+    }
+
+    return res.status(200).json({ message: "Purchase invoice deleted.", purchaseId: deletedPurchase._id });
+  } catch (error) {
+    console.error("DELETE PURCHASE ERROR:", error);
+    return res.status(500).json({ message: "Failed to delete purchase invoice." });
+  }
+};
