@@ -99,3 +99,27 @@
 .product-list-page__actions-cell .ui-button {
   white-space: nowrap;
 }
+
+
+/* Keep the catalogue status badge and row action aligned on one baseline. */
+.product-list-page__table-card tbody td {
+  vertical-align: middle;
+}
+
+.product-list-page__table-card tbody td .ui-status-badge,
+.product-list-page__table-card tbody td .ui-button {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin: 0;
+}
+
+.product-list-page__actions-cell {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.product-list-page__actions-cell .ui-button {
+  justify-content: center;
+  line-height: 1;
+}
