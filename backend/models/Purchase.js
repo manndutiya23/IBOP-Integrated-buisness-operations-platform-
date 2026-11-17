@@ -10,6 +10,7 @@ const purchaseItemSchema = new mongoose.Schema({
 }, { _id: true });
 const purchaseSchema = new mongoose.Schema({
   invoiceNumber: { type: String, unique: true, sparse: true, trim: true },
+  supplierId: { type: mongoose.Schema.Types.ObjectId, ref: "Manufacturer", default: null },
   supplierName: { type: String, required: true, trim: true },
   items: { type: [purchaseItemSchema], default: [] },
   subtotal: { type: Number, default: 0 },
