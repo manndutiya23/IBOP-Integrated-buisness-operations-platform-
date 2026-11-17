@@ -6,7 +6,7 @@ function ProductToolbar({
     setSearchTerm,
       statusFilter,
     setStatusFilter,
-      onAddProduct,
+      onCreatePurchase,
 
 }) {
 
@@ -75,9 +75,9 @@ function ProductToolbar({
             <div className="product-toolbar__right">
 
                 <Button
-                    onClick={onAddProduct}
+                    onClick={onCreatePurchase}
                 >
-                    + Add Product
+                    Create Purchase
                 </Button>
 
             </div>
