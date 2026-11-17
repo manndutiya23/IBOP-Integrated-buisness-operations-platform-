@@ -1,6 +1,6 @@
 import { Button, Card, SectionHeader } from "../Ui";
 import "./PurchaseForm.css";
-function PurchaseForm({ catalogue, supplierName, setSupplierName, date, setDate, lines, setLines, handleSubmit, loading }) {
+function PurchaseForm({ catalogue, suppliers, supplierName, setSupplierName, date, setDate, lines, setLines, handleSubmit, loading }) {
   const addLine = () => setLines((current) => [...current, { productCatalogueId: "", quantity: "1", purchasePrice: "", gst: "0" }]);
   const updateLine = (index, field, value) => setLines((current) => current.map((line, i) => i === index ? { ...line, [field]: value } : line));
   const removeLine = (index) => setLines((current) => current.filter((_, i) => i !== index));
@@ -8,7 +8,7 @@ function PurchaseForm({ catalogue, supplierName, setSupplierName, date, setDate,
     <SectionHeader title="Create Purchase Order" subtitle="Choose products from the approved Product List. Creating an order does not change warehouse stock." />
     <form onSubmit={handleSubmit} className="purchase-form">
       <div className="purchase-form__grid">
-        <div className="ibop-input-group"><label>Supplier Name</label><input value={supplierName} onChange={(e) => setSupplierName(e.target.value)} maxLength="200" required placeholder="Enter supplier" /></div>
+        <div className="ibop-input-group"><label>Supplier Name</label><select value={supplierName} onChange={(e) => setSupplierName(e.target.value)} required><option value="">Select supplier from Manufacturer List</option>{suppliers.map((supplier) => <option key={supplier._id} value={supplier._id}>{supplier.ledgerAccount}{supplier.city ? ` — ${supplier.city}` : ""}</option>)}</select></div>
         <div className="ibop-input-group"><label>Purchase Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} required /></div>
       </div>
       <div className="purchase-order-lines">
@@ -20,8 +20,8 @@ function PurchaseForm({ catalogue, supplierName, setSupplierName, date, setDate,
           <Button type="button" variant="danger" size="sm" onClick={() => removeLine(index)} disabled={lines.length === 1}>Remove</Button>
         </div>)}
       </div>
-      <div className="purchase-form__actions"><Button type="button" variant="secondary" onClick={addLine}>Add another product</Button><Button type="submit" disabled={loading || catalogue.length === 0}>{loading ? "Creating…" : "Create Purchase Invoice"}</Button></div>
-      {catalogue.length === 0 && <p>No products found. Add products to Product List first.</p>}
+      <div className="purchase-form__actions"><Button type="button" variant="secondary" onClick={addLine}>Add another product</Button><Button type="submit" disabled={loading || catalogue.length === 0 || suppliers.length === 0}>{loading ? "Creating…" : "Create Purchase Invoice"}</Button></div>
+      {catalogue.length === 0 && <p>No products found. Add products to Product List first.</p>}{suppliers.length === 0 && <p>No suppliers found. Add suppliers in Manufacturer List first.</p>}
     </form>
   </Card>;
 }
