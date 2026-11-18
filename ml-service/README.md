@@ -56,3 +56,21 @@ Because only three years are available, monthly seasonality and long-horizon wee
 ## Planned integration
 
 The Python service will eventually expose forecasts through FastAPI. The existing Express backend will authenticate IBOP users and proxy requests to the private ML service. The React frontend will not call the ML service directly.
+
+
+## Rolling-origin model validation
+
+After preparing the time series, run:
+
+```bash
+python scripts/rolling_backtest.py --data-dir data/processed
+```
+
+This evaluates up to five chronological folds per frequency, each forecasting the next 12 weekly periods or 3 monthly periods. It compares a seasonal-naive baseline against HistGradientBoosting using expanding training windows. The selected model is the one with lower mean fold WAPE; ties and insufficient ML history fall back to seasonal-naive.
+
+Outputs (all gitignored):
+
+- `reports/rolling_backtest.json` — fold-level metrics, aggregate WAPE, selected model and forecast periods.
+- `artifacts/` — fitted model files only when HistGradientBoosting wins validation.
+
+Weekly periods use Tuesday-ending weeks to match the source export's Tuesday–Monday business week. Monthly periods are calendar months. Inspect fold count and dates before interpreting scores; the monthly history is short, so validation variance may be high. No future data beyond 2026-03-31 is implied.
