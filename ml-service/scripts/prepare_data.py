@@ -76,7 +76,7 @@ def build_series(data: pd.DataFrame, output_dir: Path) -> dict:
     daily["revenue"] = daily["revenue"].astype(float)
     daily["invoice_count"] = daily["invoice_count"].astype(int)
 
-    weekly = daily.resample("W-SUN").agg(
+    weekly = daily.resample("W-TUE").agg(
         revenue=("revenue", "sum"),
         invoice_count=("invoice_count", "sum"),
     )
